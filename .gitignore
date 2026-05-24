@@ -14,3 +14,31 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Android / Gradle build outputs
+**/build/
+**/outputs/
+**/intermediates/
+**/generated/
+**/.cxx/
+
+# IDE / editor
+.idea/
+.kotlin/
+*.log
+
+# Signing keys and certificates (never upload)
+*.jks
+*.keystore
+*.p12
+*.pem
+*.key
+
+# Local env / secrets
+.env
+.env.*
+secrets.properties
+keystore.properties
+
+# Firebase local config
+google-services.json

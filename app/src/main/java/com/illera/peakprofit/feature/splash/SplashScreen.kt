@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.illera.peakprofit.domain.entity.AuthState
 
 @Composable
 fun SplashScreen(
@@ -20,11 +21,15 @@ fun SplashScreen(
     viewModel: SplashViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    val session by viewModel.session.collectAsStateWithLifecycle()
+    val authState by viewModel.authState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(state.isCheckingSession, session) {
+    LaunchedEffect(state.isCheckingSession, authState) {
         if (!state.isCheckingSession) {
-            if (session != null) onNavigateToHome() else onNavigateToLogin()
+            when (authState) {
+                is AuthState.Authenticated -> onNavigateToHome()
+                is AuthState.Unauthenticated, is AuthState.Error -> onNavigateToLogin()
+                AuthState.Loading -> Unit
+            }
         }
     }
 

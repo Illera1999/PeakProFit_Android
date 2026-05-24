@@ -1,6 +1,7 @@
 package com.illera.peakprofit.data.repository
 
 import com.google.firebase.auth.FirebaseAuth
+import com.illera.peakprofit.domain.entity.AuthState
 import com.illera.peakprofit.domain.entity.UserSession
 import com.illera.peakprofit.domain.repository.AuthRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,11 +13,13 @@ class FirebaseAuthRepository(
     private val firebaseAuth: FirebaseAuth
 ) : AuthRepository {
 
-    private val _session = MutableStateFlow(firebaseAuth.currentUser?.toSession())
-    override val session: StateFlow<UserSession?> = _session.asStateFlow()
+    private val _session = MutableStateFlow<AuthState>(AuthState.Loading)
+    override val session: StateFlow<AuthState> = _session.asStateFlow()
 
     private val listener = FirebaseAuth.AuthStateListener { auth ->
         _session.value = auth.currentUser?.toSession()
+            ?.let { AuthState.Authenticated(it) }
+            ?: AuthState.Unauthenticated
     }
 
     init {

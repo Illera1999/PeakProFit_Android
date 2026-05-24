@@ -1,4 +1,4 @@
-package com.illera.peakprofit.feature.login
+package com.illera.peakprofit.feature.register
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,10 +17,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.illera.peakprofit.domain.entity.AuthState
 
 @Composable
-fun LoginScreen(
-    onNavigateToRegister: () -> Unit,
+fun RegisterScreen(
+    onNavigateToLogin: () -> Unit,
     onNavigateToHome: () -> Unit,
-    viewModel: LoginViewModel = hiltViewModel()
+    viewModel: RegisterViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val authState by viewModel.authState.collectAsStateWithLifecycle()
@@ -35,7 +35,7 @@ fun LoginScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Text("Iniciar sesion")
+        Text("Registrarse")
         OutlinedTextField(
             value = state.email,
             onValueChange = viewModel::onEmailChanged,
@@ -48,11 +48,11 @@ fun LoginScreen(
             label = { Text("Password") },
             enabled = !state.isLoading
         )
-        Button(onClick = viewModel::signIn, enabled = !state.isLoading) {
-            Text("Entrar")
+        Button(onClick = viewModel::register, enabled = !state.isLoading) {
+            Text("Crear cuenta")
         }
-        Button(onClick = onNavigateToRegister, enabled = !state.isLoading) {
-            Text("No tienes cuenta? Registrate")
+        Button(onClick = onNavigateToLogin, enabled = !state.isLoading) {
+            Text("Ya tienes cuenta? Inicia sesion")
         }
         state.errorMessage?.let { message ->
             Text(text = message)
