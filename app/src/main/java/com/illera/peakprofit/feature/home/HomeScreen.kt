@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun HomeScreen(
+    onNavigateToExercises: () -> Unit,
     onLoggedOut: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -75,6 +76,9 @@ fun HomeScreen(
         }
         Button(onClick = viewModel::logout) {
             Text(text = "Cerrar sesión")
+        }
+        Button(onClick = onNavigateToExercises) {
+            Text(text = "Ver ejercicios")
         }
     }
 }

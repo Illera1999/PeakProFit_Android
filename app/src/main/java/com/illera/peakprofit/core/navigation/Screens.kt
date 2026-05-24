@@ -21,10 +21,4 @@ data object RegisterNav
 data object HomeNav
 
 @Serializable
-data object TrainingNav
-
-@Serializable
-data object ProgressNav
-
-@Serializable
-data object ProfileNav
+data object ExercisesNav

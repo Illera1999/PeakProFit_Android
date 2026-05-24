@@ -9,13 +9,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import com.illera.peakprofit.feature.exercises.ExercisesScreen
 import com.illera.peakprofit.feature.home.HomeScreen
 import com.illera.peakprofit.feature.login.LoginScreen
-import com.illera.peakprofit.feature.profile.ProfileScreen
-import com.illera.peakprofit.feature.progress.ProgressScreen
 import com.illera.peakprofit.feature.register.RegisterScreen
 import com.illera.peakprofit.feature.splash.SplashScreen
-import com.illera.peakprofit.feature.training.TrainingScreen
 
 @Composable
 fun PeakProFitNavHost() {
@@ -80,6 +78,7 @@ fun PeakProFitNavHost() {
         navigation<MainGraph>(startDestination = HomeNav) {
             composable<HomeNav> {
                 HomeScreen(
+                    onNavigateToExercises = { navController.navigate(ExercisesNav) },
                     onLoggedOut = {
                         navController.navigate(LoginNav) {
                             popUpTo<MainGraph> { inclusive = true }
@@ -88,9 +87,7 @@ fun PeakProFitNavHost() {
                     }
                 )
             }
-            composable<TrainingNav> { TrainingScreen() }
-            composable<ProgressNav> { ProgressScreen() }
-            composable<ProfileNav> { ProfileScreen() }
+            composable<ExercisesNav> { ExercisesScreen() }
         }
     }
 }

@@ -13,7 +13,7 @@ Responsable de UI y estado de presentacion por pantalla.
 Responsable de reglas de negocio, entidades y contratos de repositorio.
 
 - `data/*`
-Responsable de implementaciones concretas (API, base de datos, mapeos, etc.).
+Responsable de implementaciones concretas (API, Firebase, mapeos, etc.).
 
 - `core/*`
 Responsable de elementos transversales: navegacion, tema, componentes UI comunes.
@@ -43,11 +43,20 @@ Cuando la feature crezca:
 - `Application` usa `@HiltAndroidApp`.
 - `MainActivity` usa `@AndroidEntryPoint`.
 - Los `ViewModel` usan `@HiltViewModel` con constructor injection.
-- Los modulos de provision estan en `core/di/*` (actualmente `AuthModule`).
-- El `AndroidManifest.xml` debe declarar `android:name=".PeakProFitApp"` en `<application>`.
+- Los modulos de provision estan en `data/di/*` (`AuthModule`, `ExerciseModule`).
+- `AndroidManifest.xml` declara `android:name=".PeakProFitApp"` en `<application>`.
 
-## Limpieza de enfoque anterior
+## Casos de uso activos
 
-- Se elimino el service locator manual.
-- No se usa `AppContainer` en ningun flujo actual.
-- El cableado de repositorios y casos de uso vive en modulos Hilt.
+- Auth:
+- `SignInUseCase`
+- `RegisterUseCase`
+- `ObserveSessionUseCase`
+
+- Exercises:
+- `GetExercisesUseCase`
+
+## Notas de modelado
+
+- La sesion se modela con `AuthState` en dominio para evitar ambiguedad de `null`.
+- `Exercise` es entidad de dominio desacoplada del DTO remoto.

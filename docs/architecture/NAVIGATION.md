@@ -4,37 +4,39 @@
 
 Se usa `navigation-compose` con rutas tipadas y `NavHost` dedicado en `core/navigation/PeakProFitNavHost.kt`.
 
-## Piezas principales
+La navegacion esta separada en dos grafos:
 
-- `MainActivity`
-Monta tema y delega toda la navegacion al host.
+- `AuthGraph`: flujo de autenticacion.
+- `MainGraph`: flujo principal autenticado.
 
-- `Screens.kt`
-Define destinos tipados serializables:
+## Destinos tipados actuales
+
+Definidos en `Screens.kt`:
+
+- `AuthGraph`
+- `MainGraph`
 - `SplashNav`
-- `StartNav`
+- `LoginNav`
+- `RegisterNav`
 - `HomeNav`
+- `ExercisesNav`
 - `TrainingNav`
 - `ProgressNav`
 - `ProfileNav`
 
-- `PeakProFitNavHost.kt`
-Declara el grafo y transiciones entre pantallas.
+## Flujo activo
 
-## Flujo inicial activo
-
-1. `SplashNav`
-2. `StartNav`
-3. `HomeNav`
-
-Y accesos directos a:
-- `TrainingNav`
-- `ProgressNav`
-- `ProfileNav`
+1. App arranca en `AuthGraph` con `SplashNav`.
+2. `SplashNav` decide:
+- `Authenticated` -> `HomeNav` limpiando `AuthGraph`.
+- `Unauthenticated/Error` -> `LoginNav`.
+3. Desde `LoginNav` se puede navegar a `RegisterNav`.
+4. Login/registro correctos navegan a `HomeNav` limpiando `AuthGraph`.
+5. Logout desde `HomeNav` navega a `LoginNav` limpiando `MainGraph`.
 
 ## Criterios para nuevas rutas
 
 1. Crear destino tipado en `Screens.kt`.
-2. Añadir `composable<Destino>()` en `PeakProFitNavHost`.
-3. Encapsular argumentos en el propio destino tipado.
+2. Añadir `composable<Destino>()` en `PeakProFitNavHost` dentro del grafo correcto.
+3. Si cambia de flujo (auth <-> main), limpiar el grafo origen con `popUpTo<Grafo>() { inclusive = true }`.
 4. Mantener la logica de navegacion fuera de componentes UI puros.
