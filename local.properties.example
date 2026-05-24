@@ -1,0 +1,10 @@
+## Copia este archivo como local.properties y completa los valores reales.
+## Este archivo SI se puede versionar; local.properties NO.
+
+# Android SDK
+sdk.dir=/Users/tu_usuario/Library/Android/sdk
+
+# RapidAPI (ExerciseDB V2)
+RAPID_API_KEY=YOUR_RAPIDAPI_KEY_HERE
+RAPID_API_HOST=edb-with-videos-and-images-by-ascendapi.p.rapidapi.com
+RAPID_API_BASE_URL=https://edb-with-videos-and-images-by-ascendapi.p.rapidapi.com/

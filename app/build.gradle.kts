@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -6,6 +8,11 @@ plugins {
     alias(libs.plugins.google.services)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.kotlin.ksp)
+}
+
+val localProps = Properties().apply {
+    val file = rootProject.file("local.properties")
+    if (file.exists()) file.inputStream().use { this.load(it) }
 }
 
 android {
@@ -22,6 +29,16 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        val rapidApiKey = (localProps["RAPID_API_KEY"] as? String) ?: ""
+        val rapidApiHost = (localProps["RAPID_API_HOST"] as? String)
+            ?: "exercisedb.p.rapidapi.com"
+        val rapidApiBaseUrl = (localProps["RAPID_API_BASE_URL"] as? String)
+            ?: "https://exercisedb.p.rapidapi.com/"
+
+        buildConfigField("String", "RAPID_API_KEY", "\"$rapidApiKey\"")
+        buildConfigField("String", "RAPID_API_HOST", "\"$rapidApiHost\"")
+        buildConfigField("String", "RAPID_API_BASE_URL", "\"$rapidApiBaseUrl\"")
     }
 
     buildTypes {
@@ -42,6 +59,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 

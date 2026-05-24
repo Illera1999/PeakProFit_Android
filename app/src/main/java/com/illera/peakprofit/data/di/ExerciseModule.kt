@@ -1,5 +1,10 @@
 package com.illera.peakprofit.data.di
 
+import com.illera.peakprofit.BuildConfig
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.illera.peakprofit.data.dto.ExerciseListResponseDeserializer
+import com.illera.peakprofit.data.dto.ExerciseListResponseDto
 import com.illera.peakprofit.data.remote.ExerciseDbApi
 import com.illera.peakprofit.data.repository.ExerciseDbRepository
 import com.illera.peakprofit.domain.repository.ExerciseRepository
@@ -8,6 +13,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -20,21 +26,31 @@ object ExerciseModule {
     @Provides
     @Singleton
     fun provideExerciseHttpClient(): OkHttpClient {
+        val authInterceptor = Interceptor { chain ->
+            val requestBuilder = chain.request().newBuilder()
+            if (BuildConfig.RAPID_API_KEY.isNotBlank()) {
+                requestBuilder.addHeader("X-RapidAPI-Key", BuildConfig.RAPID_API_KEY)
+            }
+            requestBuilder.addHeader("X-RapidAPI-Host", BuildConfig.RAPID_API_HOST)
+            chain.proceed(requestBuilder.build())
+        }
+
         val logging = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BASIC
         }
         return OkHttpClient.Builder()
+            .addInterceptor(authInterceptor)
             .addInterceptor(logging)
             .build()
     }
 
     @Provides
     @Singleton
-    fun provideExerciseRetrofit(client: OkHttpClient): Retrofit {
+    fun provideExerciseRetrofit(client: OkHttpClient, gson: Gson): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://oss.exercisedb.dev/")
+            .baseUrl(BuildConfig.RAPID_API_BASE_URL)
             .client(client)
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
     }
 
@@ -42,6 +58,14 @@ object ExerciseModule {
     @Singleton
     fun provideExerciseDbApi(retrofit: Retrofit): ExerciseDbApi {
         return retrofit.create(ExerciseDbApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGson(): Gson {
+        return GsonBuilder()
+            .registerTypeAdapter(ExerciseListResponseDto::class.java, ExerciseListResponseDeserializer())
+            .create()
     }
 
     @Provides

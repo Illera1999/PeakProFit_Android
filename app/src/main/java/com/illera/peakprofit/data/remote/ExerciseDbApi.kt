@@ -2,8 +2,14 @@ package com.illera.peakprofit.data.remote
 
 import com.illera.peakprofit.data.dto.ExerciseListResponseDto
 import retrofit2.http.GET
+import retrofit2.http.Query
 
 interface ExerciseDbApi {
-    @GET("api/v1/exercises")
-    suspend fun getExercises(): ExerciseListResponseDto
+    @GET("exercises")
+    suspend fun getExercises(
+        @Query("limit") limit: Int = 10,
+        @Query("offset") offset: Int = 0,
+        @Query("sortMethod") sortMethod: String = "bodyPart",
+        @Query("sortOrder") sortOrder: String = "ascending"
+    ): ExerciseListResponseDto
 }

@@ -6,6 +6,7 @@ data class ExerciseDto(
     @SerializedName(value = "exerciseId", alternate = ["id"])
     val exerciseId: String? = null,
     val name: String? = null,
+    @SerializedName(value = "gifUrl", alternate = ["imageUrl"])
     val gifUrl: String? = null,
     @SerializedName("bodyParts")
     val bodyParts: List<String>? = null,
@@ -18,5 +19,8 @@ data class ExerciseDto(
     @SerializedName("equipments")
     val equipments: List<String>? = null,
     @SerializedName("equipment")
-    val equipment: String? = null
+    val equipment: String? = null,
+    val secondaryMuscles: List<String>? = null,
+    val keywords: List<String>? = null,
+    val exerciseType: String? = null
 )

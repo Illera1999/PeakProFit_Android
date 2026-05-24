@@ -39,6 +39,15 @@ local.properties
 .env.*
 secrets.properties
 keystore.properties
+api_keys.properties
+rapidapi.properties
+*.secret.properties
+*.local.properties
+local.properties
+
+# Keep templates/examples versioned
+!*.example
+!*.example.*
 
 # Firebase local config
 google-services.json

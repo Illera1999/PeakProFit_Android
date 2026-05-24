@@ -1,5 +1,7 @@
 package com.illera.peakprofit.data.repository
 
+import com.illera.peakprofit.BuildConfig
+import com.illera.peakprofit.data.mapper.toDomainOrNull
 import com.illera.peakprofit.data.remote.ExerciseDbApi
 import com.illera.peakprofit.domain.entity.Exercise
 import com.illera.peakprofit.domain.repository.ExerciseRepository
@@ -9,36 +11,10 @@ class ExerciseDbRepository(
 ) : ExerciseRepository {
 
     override suspend fun getExercises(): List<Exercise> {
-        val dtos = api.getExercises().data
-
-        return dtos.mapNotNull { dto ->
-            val name = dto.name?.trim().orEmpty()
-            if (name.isBlank()) return@mapNotNull null
-
-            val bodyParts = when {
-                !dto.bodyParts.isNullOrEmpty() -> dto.bodyParts
-                !dto.bodyPart.isNullOrBlank() -> listOf(dto.bodyPart)
-                else -> emptyList()
-            }
-            val targetMuscles = when {
-                !dto.targetMuscles.isNullOrEmpty() -> dto.targetMuscles
-                !dto.target.isNullOrBlank() -> listOf(dto.target)
-                else -> emptyList()
-            }
-            val equipments = when {
-                !dto.equipments.isNullOrEmpty() -> dto.equipments
-                !dto.equipment.isNullOrBlank() -> listOf(dto.equipment)
-                else -> emptyList()
-            }
-
-            Exercise(
-                id = dto.exerciseId?.trim().takeUnless { it.isNullOrBlank() } ?: name,
-                name = name,
-                gifUrl = dto.gifUrl.orEmpty(),
-                bodyParts = bodyParts,
-                targetMuscles = targetMuscles,
-                equipments = equipments
-            )
+        if (BuildConfig.RAPID_API_KEY.isBlank()) {
+            throw IllegalStateException("RAPID_API_KEY no configurada")
         }
+        val response = api.getExercises(limit = 10, offset = 0, sortMethod = "bodyPart", sortOrder = "ascending")
+        return response.data.mapNotNull { it.toDomainOrNull() }
     }
 }
