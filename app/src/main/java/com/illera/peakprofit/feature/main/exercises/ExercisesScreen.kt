@@ -1,4 +1,4 @@
-package com.illera.peakprofit.feature.exercises
+package com.illera.peakprofit.feature.main.exercises
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

@@ -1,4 +1,4 @@
-package com.illera.peakprofit.feature.exercises
+package com.illera.peakprofit.feature.main.exercises
 
 import android.util.Log
 import androidx.lifecycle.ViewModel

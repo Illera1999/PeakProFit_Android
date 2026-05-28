@@ -16,13 +16,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             PeakProFitTheme {
-                PeakProFitRoot()
+                PeakProFitNavHost()
             }
         }
     }
-}
-
-@Composable
-private fun PeakProFitRoot() {
-    PeakProFitNavHost()
 }

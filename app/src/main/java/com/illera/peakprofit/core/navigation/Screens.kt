@@ -9,6 +9,9 @@ data object AuthGraph
 data object MainGraph
 
 @Serializable
+data object MainTabsNav
+
+@Serializable
 data object SplashNav
 
 @Serializable

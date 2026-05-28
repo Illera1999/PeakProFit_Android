@@ -1,4 +1,4 @@
-package com.illera.peakprofit.feature.home
+package com.illera.peakprofit.feature.main.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

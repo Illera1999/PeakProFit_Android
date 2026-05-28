@@ -1,6 +1,6 @@
-package com.illera.peakprofit.feature.login
+package com.illera.peakprofit.feature.auth.register
 
-data class LoginUiState(
+data class RegisterUiState(
     val email: String = "",
     val password: String = "",
     val isLoading: Boolean = false,

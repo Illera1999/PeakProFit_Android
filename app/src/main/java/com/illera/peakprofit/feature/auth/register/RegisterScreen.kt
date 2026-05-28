@@ -1,4 +1,4 @@
-package com.illera.peakprofit.feature.register
+package com.illera.peakprofit.feature.auth.register
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

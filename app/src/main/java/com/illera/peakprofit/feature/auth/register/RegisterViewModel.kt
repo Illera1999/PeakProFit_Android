@@ -1,5 +1,6 @@
-package com.illera.peakprofit.feature.register
+package com.illera.peakprofit.feature.auth.register
 
+import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.FirebaseNetworkException
@@ -64,7 +65,7 @@ class RegisterViewModel @Inject constructor(
 
     private fun validateCredentials(email: String, password: String): String? {
         if (email.isBlank() || password.isBlank()) return "Email y password son obligatorios"
-        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) return "Email no valido"
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) return "Email no valido"
         if (password.length < 6) return "La password debe tener al menos 6 caracteres"
         return null
     }

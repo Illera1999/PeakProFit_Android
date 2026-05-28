@@ -1,4 +1,4 @@
-package com.illera.peakprofit.feature.home
+package com.illera.peakprofit.feature.main.home
 
 data class HomeUiState(
     val userName: String = "Usuario",

@@ -9,11 +9,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
-import com.illera.peakprofit.feature.exercises.ExercisesScreen
-import com.illera.peakprofit.feature.home.HomeScreen
-import com.illera.peakprofit.feature.login.LoginScreen
-import com.illera.peakprofit.feature.register.RegisterScreen
-import com.illera.peakprofit.feature.splash.SplashScreen
+import com.illera.peakprofit.feature.main.tap.MainTabsScreen
+import com.illera.peakprofit.feature.auth.login.LoginScreen
+import com.illera.peakprofit.feature.auth.register.RegisterScreen
+import com.illera.peakprofit.feature.auth.splash.SplashScreen
 
 @Composable
 fun PeakProFitNavHost() {
@@ -32,7 +31,7 @@ fun PeakProFitNavHost() {
             composable<SplashNav> {
                 SplashScreen(
                     onNavigateToHome = {
-                        navController.navigate(HomeNav) {
+                        navController.navigate(MainTabsNav) {
                             popUpTo<AuthGraph> { inclusive = true }
                             launchSingleTop = true
                         }
@@ -54,7 +53,7 @@ fun PeakProFitNavHost() {
                         }
                     },
                     onNavigateToHome = {
-                        navController.navigate(HomeNav) {
+                        navController.navigate(MainTabsNav) {
                             popUpTo<AuthGraph> { inclusive = true }
                             launchSingleTop = true
                         }
@@ -66,7 +65,7 @@ fun PeakProFitNavHost() {
                 RegisterScreen(
                     onNavigateToLogin = { navController.popBackStack() },
                     onNavigateToHome = {
-                        navController.navigate(HomeNav) {
+                        navController.navigate(MainTabsNav) {
                             popUpTo<AuthGraph> { inclusive = true }
                             launchSingleTop = true
                         }
@@ -75,10 +74,9 @@ fun PeakProFitNavHost() {
             }
         }
 
-        navigation<MainGraph>(startDestination = HomeNav) {
-            composable<HomeNav> {
-                HomeScreen(
-                    onNavigateToExercises = { navController.navigate(ExercisesNav) },
+        navigation<MainGraph>(startDestination = MainTabsNav) {
+            composable<MainTabsNav> {
+                MainTabsScreen(
                     onLoggedOut = {
                         navController.navigate(LoginNav) {
                             popUpTo<MainGraph> { inclusive = true }
@@ -87,7 +85,6 @@ fun PeakProFitNavHost() {
                     }
                 )
             }
-            composable<ExercisesNav> { ExercisesScreen() }
         }
     }
 }

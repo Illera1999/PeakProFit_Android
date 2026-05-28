@@ -1,4 +1,4 @@
-package com.illera.peakprofit.feature.splash
+package com.illera.peakprofit.feature.auth.splash
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

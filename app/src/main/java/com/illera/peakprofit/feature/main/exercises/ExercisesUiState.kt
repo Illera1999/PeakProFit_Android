@@ -1,4 +1,4 @@
-package com.illera.peakprofit.feature.exercises
+package com.illera.peakprofit.feature.main.exercises
 
 import com.illera.peakprofit.domain.entity.Exercise
 
