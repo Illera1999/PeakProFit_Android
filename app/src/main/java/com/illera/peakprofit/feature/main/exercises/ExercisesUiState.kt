@@ -4,6 +4,8 @@ import com.illera.peakprofit.domain.entity.Exercise
 
 data class ExercisesUiState(
     val isLoading: Boolean = false,
+    val isLoadingMore: Boolean = false,
+    val hasMore: Boolean = true,
     val query: String = "",
     val items: List<Exercise> = emptyList(),
     val filteredItems: List<Exercise> = emptyList(),

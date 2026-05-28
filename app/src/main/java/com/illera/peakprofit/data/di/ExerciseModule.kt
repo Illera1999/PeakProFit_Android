@@ -2,9 +2,6 @@ package com.illera.peakprofit.data.di
 
 import com.illera.peakprofit.BuildConfig
 import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.illera.peakprofit.data.dto.ExerciseListResponseDeserializer
-import com.illera.peakprofit.data.dto.ExerciseListResponseDto
 import com.illera.peakprofit.data.remote.ExerciseDbApi
 import com.illera.peakprofit.data.repository.ExerciseDbRepository
 import com.illera.peakprofit.domain.repository.ExerciseRepository
@@ -63,9 +60,7 @@ object ExerciseModule {
     @Provides
     @Singleton
     fun provideGson(): Gson {
-        return GsonBuilder()
-            .registerTypeAdapter(ExerciseListResponseDto::class.java, ExerciseListResponseDeserializer())
-            .create()
+        return Gson()
     }
 
     @Provides

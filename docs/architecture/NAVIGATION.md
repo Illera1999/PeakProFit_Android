@@ -15,24 +15,23 @@ Definidos en `Screens.kt`:
 
 - `AuthGraph`
 - `MainGraph`
+- `MainTabsNav`
 - `SplashNav`
 - `LoginNav`
 - `RegisterNav`
 - `HomeNav`
 - `ExercisesNav`
-- `TrainingNav`
-- `ProgressNav`
-- `ProfileNav`
 
 ## Flujo activo
 
 1. App arranca en `AuthGraph` con `SplashNav`.
 2. `SplashNav` decide:
-- `Authenticated` -> `HomeNav` limpiando `AuthGraph`.
+- `Authenticated` -> `MainTabsNav` limpiando `AuthGraph`.
 - `Unauthenticated/Error` -> `LoginNav`.
 3. Desde `LoginNav` se puede navegar a `RegisterNav`.
-4. Login/registro correctos navegan a `HomeNav` limpiando `AuthGraph`.
-5. Logout desde `HomeNav` navega a `LoginNav` limpiando `MainGraph`.
+4. Login/registro correctos navegan a `MainTabsNav` limpiando `AuthGraph`.
+5. `MainTabsNav` contiene navegacion interna por tabs (`Exercises` y `Home`) con `HorizontalPager` + `NavigationBar`.
+6. Logout desde `Home` navega a `LoginNav` limpiando `MainGraph`.
 
 ## Criterios para nuevas rutas
 

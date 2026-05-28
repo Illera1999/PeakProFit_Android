@@ -8,11 +8,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.Card
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -37,7 +39,7 @@ fun ExercisesScreen(
             onValueChange = viewModel::onQueryChanged,
             modifier = Modifier.fillMaxWidth(),
             label = { Text("Buscar por nombre, músculo o equipo") },
-            enabled = !state.isLoading
+            enabled = !state.isLoading && !state.isLoadingMore
         )
 
         if (state.isLoading) {
@@ -57,7 +59,7 @@ fun ExercisesScreen(
                 itemsIndexed(
                     items = state.filteredItems,
                     key = { index, exercise -> "${exercise.id}-$index" }
-                ) { _, exercise ->
+                ) { index, exercise ->
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -67,6 +69,39 @@ fun ExercisesScreen(
                         Text(text = "Zona: ${exercise.bodyParts.joinToString()}")
                         Text(text = "Músculo objetivo: ${exercise.targetMuscles.joinToString()}")
                         Text(text = "Equipo: ${exercise.equipments.joinToString()}")
+                    }
+
+                    if (index >= state.filteredItems.lastIndex - 2 && state.query.isBlank()) {
+                        LaunchedEffect(index, state.isLoadingMore, state.hasMore, state.query) {
+                            if (!state.isLoadingMore && state.hasMore) {
+                                viewModel.loadMore()
+                            }
+                        }
+                    }
+                }
+
+                if (state.isLoadingMore) {
+                    item(key = "loading_more") {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(12.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            CircularProgressIndicator()
+                            Text(text = "Cargando más ejercicios...")
+                        }
+                    }
+                }
+
+                if (!state.hasMore && state.items.isNotEmpty() && state.query.isBlank()) {
+                    item(key = "end_of_list") {
+                        Card(modifier = Modifier.fillMaxWidth()) {
+                            Text(
+                                text = "Has llegado al final de la lista.",
+                                modifier = Modifier.padding(12.dp)
+                            )
+                        }
                     }
                 }
             }

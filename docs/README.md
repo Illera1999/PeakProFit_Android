@@ -1,6 +1,6 @@
 # PeakProFit Android - Documentacion
 
-Fecha de actualizacion: 2026-05-23
+Fecha de actualizacion: 2026-05-28
 
 ## Indice
 
@@ -10,6 +10,7 @@ Fecha de actualizacion: 2026-05-23
 2. Arquitectura y estructura
 - [Arquitectura base](./architecture/ARCHITECTURE.md)
 - [Navegacion](./architecture/NAVIGATION.md)
+- [Paginacion de ejercicios](./architecture/EXERCISES_PAGINATION.md)
 
 3. Decisiones tecnicas
 - [Librerias y motivos](./decisions/LIBRARIES.md)

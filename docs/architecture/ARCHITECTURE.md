@@ -56,6 +56,13 @@ Cuando la feature crezca:
 - Exercises:
 - `GetExercisesUseCase`
 
+## Paginacion de ejercicios
+
+- La carga de ejercicios se hace por paginas mediante `limit` y `offset`.
+- El contrato de dominio para ejercicios expone `getExercises(limit, offset)`.
+- El estado de pantalla separa carga inicial (`isLoading`) de carga incremental (`isLoadingMore`).
+- La descripcion completa del flujo esta en [EXERCISES_PAGINATION.md](./EXERCISES_PAGINATION.md).
+
 ## Notas de modelado
 
 - La sesion se modela con `AuthState` en dominio para evitar ambiguedad de `null`.
