@@ -25,6 +25,7 @@ import com.illera.peakprofit.feature.main.home.HomeScreen
 @Composable
 fun MainTabsScreen(
     onLoggedOut: () -> Unit,
+    onOpenExerciseDetail: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val activity = LocalActivity.current
@@ -78,7 +79,7 @@ fun MainTabsScreen(
                 .fillMaxSize()
         ) { page ->
             when (page) {
-                0 -> ExercisesScreen()
+                0 -> ExercisesScreen(onOpenExerciseDetail = onOpenExerciseDetail)
                 1 -> HomeScreen(onLoggedOut = onLoggedOut)
             }
         }

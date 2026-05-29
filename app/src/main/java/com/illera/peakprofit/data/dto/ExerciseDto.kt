@@ -21,6 +21,10 @@ data class ExerciseDto(
     @SerializedName("equipment")
     val equipment: String? = null,
     val secondaryMuscles: List<String>? = null,
+    val instructions: List<String>? = null,
+    val description: String? = null,
+    val difficulty: String? = null,
+    val category: String? = null,
     val keywords: List<String>? = null,
     val exerciseType: String? = null
 )

@@ -6,5 +6,10 @@ data class Exercise(
     val gifUrl: String,
     val bodyParts: List<String>,
     val targetMuscles: List<String>,
-    val equipments: List<String>
+    val equipments: List<String>,
+    val secondaryMuscles: List<String>,
+    val instructions: List<String>,
+    val description: String,
+    val difficulty: String,
+    val category: String
 )

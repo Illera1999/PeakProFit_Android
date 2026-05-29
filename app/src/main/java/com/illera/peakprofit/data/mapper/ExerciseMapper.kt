@@ -13,7 +13,12 @@ fun ExerciseDto.toDomainOrNull(): Exercise? {
         gifUrl = gifUrl.orEmpty(),
         bodyParts = bodyParts.normalizeSingleOrList(bodyPart),
         targetMuscles = targetMuscles.normalizeSingleOrList(target),
-        equipments = equipments.normalizeSingleOrList(equipment)
+        equipments = equipments.normalizeSingleOrList(equipment),
+        secondaryMuscles = secondaryMuscles ?: emptyList(),
+        instructions = instructions ?: emptyList(),
+        description = description.orEmpty(),
+        difficulty = difficulty.orEmpty(),
+        category = category.orEmpty()
     )
 }
 

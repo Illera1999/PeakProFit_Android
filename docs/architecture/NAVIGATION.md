@@ -21,6 +21,7 @@ Definidos en `Screens.kt`:
 - `RegisterNav`
 - `HomeNav`
 - `ExercisesNav`
+- `ExerciseDetailNav`
 
 ## Flujo activo
 
@@ -31,7 +32,9 @@ Definidos en `Screens.kt`:
 3. Desde `LoginNav` se puede navegar a `RegisterNav`.
 4. Login/registro correctos navegan a `MainTabsNav` limpiando `AuthGraph`.
 5. `MainTabsNav` contiene navegacion interna por tabs (`Exercises` y `Home`) con `HorizontalPager` + `NavigationBar`.
-6. Logout desde `Home` navega a `LoginNav` limpiando `MainGraph`.
+6. Desde `Exercises`, al pulsar un item, se hace push a `ExerciseDetailNav(exerciseId)` dentro de `MainGraph`.
+7. `ExerciseDetailNav` se renderiza por encima de las tabs; al volver (`popBackStack`) reaparece la barra inferior.
+8. Logout desde `Home` navega a `LoginNav` limpiando `MainGraph`.
 
 ## Criterios para nuevas rutas
 

@@ -1,6 +1,6 @@
 # PeakProFit Android - Documentacion
 
-Fecha de actualizacion: 2026-05-28
+Fecha de actualizacion: 2026-05-29
 
 ## Indice
 

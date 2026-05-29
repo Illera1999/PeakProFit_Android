@@ -9,10 +9,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.illera.peakprofit.feature.main.tap.MainTabsScreen
 import com.illera.peakprofit.feature.auth.login.LoginScreen
 import com.illera.peakprofit.feature.auth.register.RegisterScreen
 import com.illera.peakprofit.feature.auth.splash.SplashScreen
+import com.illera.peakprofit.feature.main.exercise_detail.ExerciseDetailScreen
 
 @Composable
 fun PeakProFitNavHost() {
@@ -82,7 +84,18 @@ fun PeakProFitNavHost() {
                             popUpTo<MainGraph> { inclusive = true }
                             launchSingleTop = true
                         }
+                    },
+                    onOpenExerciseDetail = { exerciseId ->
+                        navController.navigate(ExerciseDetailNav(exerciseId = exerciseId))
                     }
+                )
+            }
+
+            composable<ExerciseDetailNav> { backStackEntry ->
+                val route = backStackEntry.toRoute<ExerciseDetailNav>()
+                ExerciseDetailScreen(
+                    exerciseId = route.exerciseId,
+                    onBack = { navController.popBackStack() }
                 )
             }
         }
