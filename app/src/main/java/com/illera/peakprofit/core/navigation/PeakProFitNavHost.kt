@@ -85,6 +85,12 @@ fun PeakProFitNavHost() {
                             launchSingleTop = true
                         }
                     },
+                    onNavigateToLogin = {
+                        navController.navigate(AuthGraph) {
+                            popUpTo<MainGraph> { inclusive = true }
+                            launchSingleTop = true
+                        }
+                    },
                     onOpenExerciseDetail = { exerciseId ->
                         navController.navigate(ExerciseDetailNav(exerciseId = exerciseId))
                     }

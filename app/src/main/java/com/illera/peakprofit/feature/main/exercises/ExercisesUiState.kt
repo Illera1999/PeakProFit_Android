@@ -3,6 +3,7 @@ package com.illera.peakprofit.feature.main.exercises
 import com.illera.peakprofit.domain.entity.Exercise
 
 data class ExercisesUiState(
+    val canSaveExercises: Boolean = false,
     val isLoading: Boolean = false,
     val isLoadingMore: Boolean = false,
     val hasMore: Boolean = true,

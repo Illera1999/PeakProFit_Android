@@ -3,7 +3,9 @@ package com.illera.peakprofit.feature.main.exercises
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.illera.peakprofit.domain.entity.AuthState
 import com.illera.peakprofit.domain.entity.Exercise
+import com.illera.peakprofit.domain.usecase.auth.ObserveSessionUseCase
 import com.illera.peakprofit.domain.usecase.exercise.GetExercisesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -14,7 +16,8 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class ExercisesViewModel @Inject constructor(
-    private val getExercisesUseCase: GetExercisesUseCase
+    private val getExercisesUseCase: GetExercisesUseCase,
+    private val observeSessionUseCase: ObserveSessionUseCase
 ) : ViewModel() {
     /**
      * Constantes de clase:
@@ -32,7 +35,18 @@ class ExercisesViewModel @Inject constructor(
     private var currentOffset = 0
 
     init {
+        observeAuthState()
         loadInitialExercises()
+    }
+
+    private fun observeAuthState() {
+        viewModelScope.launch {
+            observeSessionUseCase().collect { authState ->
+                _uiState.value = _uiState.value.copy(
+                    canSaveExercises = authState is AuthState.Authenticated
+                )
+            }
+        }
     }
 
     fun onQueryChanged(query: String) {

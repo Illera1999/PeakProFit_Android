@@ -8,6 +8,7 @@ import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.illera.peakprofit.domain.entity.AuthState
+import com.illera.peakprofit.domain.usecase.auth.ContinueAsGuestUseCase
 import com.illera.peakprofit.domain.usecase.auth.ObserveSessionUseCase
 import com.illera.peakprofit.domain.usecase.auth.SignInUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,6 +21,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val signInUseCase: SignInUseCase,
+    private val continueAsGuestUseCase: ContinueAsGuestUseCase,
     private val observeSessionUseCase: ObserveSessionUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(LoginUiState())
@@ -62,6 +64,10 @@ class LoginViewModel @Inject constructor(
             }
             _uiState.value = _uiState.value.copy(isLoading = false)
         }
+    }
+
+    fun continueAsGuest() {
+        continueAsGuestUseCase()
     }
 
     private fun validateCredentials(email: String, password: String): String? {

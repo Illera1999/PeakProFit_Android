@@ -18,12 +18,12 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun HomeScreen(
     onLoggedOut: () -> Unit,
+    onNavigateToLogin: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-
-    LaunchedEffect(state.userEmail) {
-        if (state.userEmail.isBlank()) onLoggedOut()
+    LaunchedEffect(state.isGuest, state.userEmail) {
+        if (!state.isGuest && state.userEmail.isBlank()) onLoggedOut()
     }
 
     Column(
@@ -46,8 +46,19 @@ fun HomeScreen(
                 Text(text = "${state.streakDays} días")
             }
         }
-        Button(onClick = viewModel::logout) {
-            Text(text = "Cerrar sesión")
+        if (state.isGuest) {
+            Button(
+                onClick = {
+                    viewModel.logout()
+                    onNavigateToLogin()
+                }
+            ) {
+                Text(text = "Iniciar sesión")
+            }
+        } else {
+            Button(onClick = viewModel::logout) {
+                Text(text = "Cerrar sesión")
+            }
         }
     }
 }

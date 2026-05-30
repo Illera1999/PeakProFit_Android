@@ -26,7 +26,7 @@ fun SplashScreen(
     LaunchedEffect(state.isCheckingSession, authState) {
         if (!state.isCheckingSession) {
             when (authState) {
-                is AuthState.Authenticated -> onNavigateToHome()
+                is AuthState.Authenticated, AuthState.Guest -> onNavigateToHome()
                 is AuthState.Unauthenticated, is AuthState.Error -> onNavigateToLogin()
                 AuthState.Loading -> Unit
             }

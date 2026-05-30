@@ -8,5 +8,6 @@ interface AuthRepository {
     val session: StateFlow<AuthState>
     suspend fun signIn(email: String, password: String)
     suspend fun register(email: String, password: String)
+    fun continueAsGuest()
     fun signOut()
 }

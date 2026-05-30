@@ -15,11 +15,17 @@ class FirebaseAuthRepository(
 
     private val _session = MutableStateFlow<AuthState>(AuthState.Loading)
     override val session: StateFlow<AuthState> = _session.asStateFlow()
+    private var isGuestSession = false
 
     private val listener = FirebaseAuth.AuthStateListener { auth ->
-        _session.value = auth.currentUser?.toSession()
-            ?.let { AuthState.Authenticated(it) }
-            ?: AuthState.Unauthenticated
+        _session.value = when {
+            auth.currentUser != null -> {
+                isGuestSession = false
+                AuthState.Authenticated(auth.currentUser!!.toSession())
+            }
+            isGuestSession -> AuthState.Guest
+            else -> AuthState.Unauthenticated
+        }
     }
 
     init {
@@ -27,14 +33,26 @@ class FirebaseAuthRepository(
     }
 
     override suspend fun signIn(email: String, password: String) {
+        isGuestSession = false
         firebaseAuth.signInWithEmailAndPassword(email, password).await()
     }
 
     override suspend fun register(email: String, password: String) {
+        isGuestSession = false
         firebaseAuth.createUserWithEmailAndPassword(email, password).await()
     }
 
+    override fun continueAsGuest() {
+        isGuestSession = true
+        if (firebaseAuth.currentUser == null) {
+            _session.value = AuthState.Guest
+        } else {
+            _session.value = AuthState.Authenticated(firebaseAuth.currentUser!!.toSession())
+        }
+    }
+
     override fun signOut() {
+        isGuestSession = false
         firebaseAuth.signOut()
     }
 

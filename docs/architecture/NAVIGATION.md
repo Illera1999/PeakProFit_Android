@@ -31,10 +31,14 @@ Definidos en `Screens.kt`:
 - `Unauthenticated/Error` -> `LoginNav`.
 3. Desde `LoginNav` se puede navegar a `RegisterNav`.
 4. Login/registro correctos navegan a `MainTabsNav` limpiando `AuthGraph`.
-5. `MainTabsNav` contiene navegacion interna por tabs (`Exercises` y `Home`) con `HorizontalPager` + `NavigationBar`.
-6. Desde `Exercises`, al pulsar un item, se hace push a `ExerciseDetailNav(exerciseId)` dentro de `MainGraph`.
-7. `ExerciseDetailNav` se renderiza por encima de las tabs; al volver (`popBackStack`) reaparece la barra inferior.
-8. Logout desde `Home` navega a `LoginNav` limpiando `MainGraph`.
+5. Login permite acceso como invitado cambiando el estado de sesion a `AuthState.Guest`.
+6. `MainTabsNav` contiene navegacion interna por tabs (`Exercises` y `Home`) con `HorizontalPager` + `NavigationBar`.
+7. La UI se adapta leyendo `AuthState`:
+- En `Home`, `Guest` muestra accion para volver al login.
+- En `Exercises`, el icono de guardar solo se muestra en `Authenticated`.
+8. Desde `Exercises`, al pulsar un item, se hace push a `ExerciseDetailNav(exerciseId)` dentro de `MainGraph`.
+9. `ExerciseDetailNav` se renderiza por encima de las tabs; al volver (`popBackStack`) reaparece la barra inferior.
+10. Logout desde `Home` navega a `LoginNav` limpiando `MainGraph`.
 
 ## Criterios para nuevas rutas
 

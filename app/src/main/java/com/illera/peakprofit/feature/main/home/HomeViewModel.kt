@@ -23,14 +23,33 @@ class HomeViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             observeSessionUseCase().collect { authState ->
-                val session = (authState as? AuthState.Authenticated)?.session
-                val displayName = session?.email?.substringBefore("@")
-                    ?.takeIf { it.isNotBlank() }
-                    ?: "Usuario"
-                _uiState.value = _uiState.value.copy(
-                    userName = displayName,
-                    userEmail = session?.email ?: session?.uid.orEmpty()
-                )
+                when (authState) {
+                    is AuthState.Authenticated -> {
+                        val session = authState.session
+                        val displayName = session.email?.substringBefore("@")
+                            ?.takeIf { it.isNotBlank() }
+                            ?: "Usuario"
+                        _uiState.value = _uiState.value.copy(
+                            isGuest = false,
+                            userName = displayName,
+                            userEmail = session.email ?: session.uid
+                        )
+                    }
+                    AuthState.Guest -> {
+                        _uiState.value = _uiState.value.copy(
+                            isGuest = true,
+                            userName = "Invitado",
+                            userEmail = ""
+                        )
+                    }
+                    else -> {
+                        _uiState.value = _uiState.value.copy(
+                            isGuest = false,
+                            userName = "Usuario",
+                            userEmail = ""
+                        )
+                    }
+                }
             }
         }
     }

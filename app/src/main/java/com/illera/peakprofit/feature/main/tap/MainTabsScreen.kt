@@ -25,6 +25,7 @@ import com.illera.peakprofit.feature.main.home.HomeScreen
 @Composable
 fun MainTabsScreen(
     onLoggedOut: () -> Unit,
+    onNavigateToLogin: () -> Unit,
     onOpenExerciseDetail: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -80,7 +81,10 @@ fun MainTabsScreen(
         ) { page ->
             when (page) {
                 0 -> ExercisesScreen(onOpenExerciseDetail = onOpenExerciseDetail)
-                1 -> HomeScreen(onLoggedOut = onLoggedOut)
+                1 -> HomeScreen(
+                    onLoggedOut = onLoggedOut,
+                    onNavigateToLogin = onNavigateToLogin
+                )
             }
         }
 

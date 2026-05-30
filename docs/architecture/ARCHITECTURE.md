@@ -75,3 +75,4 @@ Cuando la feature crezca:
 
 - La sesion se modela con `AuthState` en dominio para evitar ambiguedad de `null`.
 - `Exercise` es entidad de dominio desacoplada del DTO remoto.
+- El modo invitado se modela en sesion (`AuthState.Guest`) y se consume desde `ObserveSessionUseCase`.
