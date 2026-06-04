@@ -21,11 +21,16 @@ local.properties
 **/intermediates/
 **/generated/
 **/.cxx/
+*.apk
+*.aab
 
 # IDE / editor
 .idea/
 .kotlin/
 *.log
+*.hprof
+*.orig
+*.bak
 
 # Signing keys and certificates (never upload)
 *.jks
@@ -51,3 +56,4 @@ local.properties
 
 # Firebase local config
 google-services.json
+google-services-*.json

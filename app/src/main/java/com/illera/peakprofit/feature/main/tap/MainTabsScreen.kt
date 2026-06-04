@@ -27,6 +27,7 @@ fun MainTabsScreen(
     onLoggedOut: () -> Unit,
     onNavigateToLogin: () -> Unit,
     onOpenExerciseDetail: (String) -> Unit,
+    onOpenSavedExercises: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val activity = LocalActivity.current
@@ -83,7 +84,8 @@ fun MainTabsScreen(
                 0 -> ExercisesScreen(onOpenExerciseDetail = onOpenExerciseDetail)
                 1 -> HomeScreen(
                     onLoggedOut = onLoggedOut,
-                    onNavigateToLogin = onNavigateToLogin
+                    onNavigateToLogin = onNavigateToLogin,
+                    onOpenSavedExercises = onOpenSavedExercises
                 )
             }
         }

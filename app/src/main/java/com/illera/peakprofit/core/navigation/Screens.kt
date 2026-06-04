@@ -27,6 +27,9 @@ data object HomeNav
 data object ExercisesNav
 
 @Serializable
+data object SavedExercisesNav
+
+@Serializable
 data class ExerciseDetailNav(
     val exerciseId: String
 )

@@ -6,9 +6,14 @@ import androidx.lifecycle.viewModelScope
 import com.illera.peakprofit.domain.entity.AuthState
 import com.illera.peakprofit.domain.entity.Exercise
 import com.illera.peakprofit.domain.usecase.auth.ObserveSessionUseCase
+import com.illera.peakprofit.domain.usecase.exercise.GetExerciseByIdUseCase
 import com.illera.peakprofit.domain.usecase.exercise.GetExercisesUseCase
+import com.illera.peakprofit.domain.usecase.exercise.ObserveSavedExercisesUseCase
+import com.illera.peakprofit.domain.usecase.exercise.RemoveSavedExerciseUseCase
+import com.illera.peakprofit.domain.usecase.exercise.SaveExerciseUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,6 +22,10 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class ExercisesViewModel @Inject constructor(
     private val getExercisesUseCase: GetExercisesUseCase,
+    private val getExerciseByIdUseCase: GetExerciseByIdUseCase,
+    private val saveExerciseUseCase: SaveExerciseUseCase,
+    private val removeSavedExerciseUseCase: RemoveSavedExerciseUseCase,
+    private val observeSavedExercisesUseCase: ObserveSavedExercisesUseCase,
     private val observeSessionUseCase: ObserveSessionUseCase
 ) : ViewModel() {
     /**
@@ -33,6 +42,8 @@ class ExercisesViewModel @Inject constructor(
     val uiState: StateFlow<ExercisesUiState> = _uiState.asStateFlow()
     // Marca el desplazamiento absoluto de la siguiente pagina a solicitar.
     private var currentOffset = 0
+    private var currentUserId: String? = null
+    private var savedExercisesJob: Job? = null
 
     init {
         observeAuthState()
@@ -42,8 +53,40 @@ class ExercisesViewModel @Inject constructor(
     private fun observeAuthState() {
         viewModelScope.launch {
             observeSessionUseCase().collect { authState ->
+                when (authState) {
+                    is AuthState.Authenticated -> {
+                        currentUserId = authState.session.uid
+                        _uiState.value = _uiState.value.copy(canSaveExercises = true)
+                        observeSavedExercises(authState.session.uid)
+                    }
+                    else -> {
+                        currentUserId = null
+                        savedExercisesJob?.cancel()
+                        _uiState.value = _uiState.value.copy(
+                            canSaveExercises = false,
+                            savedExerciseIds = emptySet()
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    fun onSaveClicked(exerciseId: String) {
+        val userId = currentUserId ?: return
+
+        viewModelScope.launch {
+            runCatching {
+                if (_uiState.value.savedExerciseIds.contains(exerciseId)) {
+                    removeSavedExerciseUseCase(userId = userId, exerciseId = exerciseId)
+                } else {
+                    val exerciseDetail = getExerciseByIdUseCase(exerciseId)
+                    saveExerciseUseCase(userId = userId, exercise = exerciseDetail)
+                }
+            }.onFailure {
+                Log.e(TAG, "Error actualizando guardado del ejercicio $exerciseId", it)
                 _uiState.value = _uiState.value.copy(
-                    canSaveExercises = authState is AuthState.Authenticated
+                    errorMessage = "No se pudo actualizar el ejercicio guardado. Intentalo de nuevo."
                 )
             }
         }
@@ -141,6 +184,17 @@ class ExercisesViewModel @Inject constructor(
                 exercise.bodyParts.any { it.contains(normalizedQuery, ignoreCase = true) } ||
                 exercise.targetMuscles.any { it.contains(normalizedQuery, ignoreCase = true) } ||
                 exercise.equipments.any { it.contains(normalizedQuery, ignoreCase = true) }
+        }
+    }
+
+    private fun observeSavedExercises(userId: String) {
+        savedExercisesJob?.cancel()
+        savedExercisesJob = viewModelScope.launch {
+            observeSavedExercisesUseCase(userId).collect { savedExercises ->
+                _uiState.value = _uiState.value.copy(
+                    savedExerciseIds = savedExercises.mapTo(mutableSetOf()) { it.id }
+                )
+            }
         }
     }
 }

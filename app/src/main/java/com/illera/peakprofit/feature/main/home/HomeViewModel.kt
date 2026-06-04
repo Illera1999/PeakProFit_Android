@@ -30,6 +30,7 @@ class HomeViewModel @Inject constructor(
                             ?.takeIf { it.isNotBlank() }
                             ?: "Usuario"
                         _uiState.value = _uiState.value.copy(
+                            isAuthenticated = true,
                             isGuest = false,
                             userName = displayName,
                             userEmail = session.email ?: session.uid
@@ -37,6 +38,7 @@ class HomeViewModel @Inject constructor(
                     }
                     AuthState.Guest -> {
                         _uiState.value = _uiState.value.copy(
+                            isAuthenticated = false,
                             isGuest = true,
                             userName = "Invitado",
                             userEmail = ""
@@ -44,6 +46,7 @@ class HomeViewModel @Inject constructor(
                     }
                     else -> {
                         _uiState.value = _uiState.value.copy(
+                            isAuthenticated = false,
                             isGuest = false,
                             userName = "Usuario",
                             userEmail = ""

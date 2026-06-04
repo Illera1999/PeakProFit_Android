@@ -22,6 +22,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -61,10 +62,18 @@ fun ExerciseDetailScreen(
                 },
                 actions = {
                     if (state.canSaveExercise) {
-                        IconButton(onClick = { }) {
+                        IconButton(onClick = viewModel::onSaveClicked) {
                             Icon(
-                                imageVector = Icons.Outlined.BookmarkBorder,
-                                contentDescription = "Guardar ejercicio"
+                                imageVector = if (state.isExerciseSaved) {
+                                    Icons.Filled.Bookmark
+                                } else {
+                                    Icons.Outlined.BookmarkBorder
+                                },
+                                contentDescription = if (state.isExerciseSaved) {
+                                    "Quitar ejercicio guardado"
+                                } else {
+                                    "Guardar ejercicio"
+                                }
                             )
                         }
                     }

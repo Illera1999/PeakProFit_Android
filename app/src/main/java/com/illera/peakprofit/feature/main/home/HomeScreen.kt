@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 fun HomeScreen(
     onLoggedOut: () -> Unit,
     onNavigateToLogin: () -> Unit,
+    onOpenSavedExercises: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -44,6 +45,11 @@ fun HomeScreen(
             Column(modifier = Modifier.padding(12.dp)) {
                 Text(text = "Racha")
                 Text(text = "${state.streakDays} días")
+            }
+        }
+        if (state.isAuthenticated) {
+            Button(onClick = onOpenSavedExercises) {
+                Text(text = "Ver ejercicios guardados")
             }
         }
         if (state.isGuest) {
