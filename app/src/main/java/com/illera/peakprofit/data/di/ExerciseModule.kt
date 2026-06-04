@@ -1,10 +1,16 @@
 package com.illera.peakprofit.data.di
 
+import android.content.Context
+import android.content.SharedPreferences
+import androidx.core.content.edit
+import dagger.hilt.android.qualifiers.ApplicationContext
 import com.illera.peakprofit.BuildConfig
 import com.google.gson.Gson
 import com.illera.peakprofit.data.remote.ExerciseDbApi
 import com.illera.peakprofit.data.repository.ExerciseDbRepository
+import com.illera.peakprofit.data.repository.StorageSavedExerciseRepository
 import com.illera.peakprofit.domain.repository.ExerciseRepository
+import com.illera.peakprofit.domain.repository.SavedExerciseRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -19,6 +25,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 @Module
 @InstallIn(SingletonComponent::class)
 object ExerciseModule {
+    private const val SAVED_EXERCISES_PREFS = "saved_exercises_storage"
 
     @Provides
     @Singleton
@@ -67,5 +74,22 @@ object ExerciseModule {
     @Singleton
     fun provideExerciseRepository(api: ExerciseDbApi): ExerciseRepository {
         return ExerciseDbRepository(api)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSavedExercisesPreferences(
+        @ApplicationContext context: Context
+    ): SharedPreferences {
+        return context.getSharedPreferences(SAVED_EXERCISES_PREFS, Context.MODE_PRIVATE)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSavedExerciseRepository(
+        sharedPreferences: SharedPreferences,
+        gson: Gson
+    ): SavedExerciseRepository {
+        return StorageSavedExerciseRepository(sharedPreferences, gson)
     }
 }
