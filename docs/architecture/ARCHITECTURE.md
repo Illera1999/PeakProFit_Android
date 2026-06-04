@@ -56,6 +56,7 @@ Cuando la feature crezca:
 - Exercises:
 - `GetExercisesUseCase`
 - `GetExerciseByIdUseCase`
+- `GetExerciseImageByIdUseCase`
 
 ## Paginacion de ejercicios
 
@@ -67,9 +68,13 @@ Cuando la feature crezca:
 ## Detalle de ejercicios
 
 - El detalle usa endpoint dedicado por id (`GET /exercises/exercise/{id}`).
+- La imagen del ejercicio usa endpoint dedicado con query params (`GET /image?exerciseId={id}&resolution=360`).
+- No se usa la variante `GET /image/{id}` porque no coincide con la implementacion validada en iOS ni con el comportamiento real observado en RapidAPI.
 - La navegacion al detalle es una ruta tipada (`ExerciseDetailNav`) en el `MainGraph`.
 - La carga de detalle se gestiona en `ExerciseDetailViewModel`.
 - El repositorio de ejercicios mantiene cache en memoria por `id` para evitar llamadas repetidas durante la sesion.
+- La imagen se cachea en memoria durante la vida del proceso para evitar descargas repetidas en la misma ejecucion.
+- Si la API no devuelve imagen para un ejercicio concreto, el detalle sigue siendo valido y la UI no debe tratarlo como error bloqueante.
 
 ## Notas de modelado
 

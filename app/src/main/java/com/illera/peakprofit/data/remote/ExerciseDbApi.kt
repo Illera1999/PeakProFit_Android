@@ -1,6 +1,7 @@
 package com.illera.peakprofit.data.remote
 
 import com.illera.peakprofit.data.dto.ExerciseDto
+import okhttp3.ResponseBody
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -18,4 +19,10 @@ interface ExerciseDbApi {
     suspend fun getExerciseById(
         @Path("id") id: String
     ): ExerciseDto
+
+    @GET("image")
+    suspend fun getExerciseImage(
+        @Query("exerciseId") exerciseId: String,
+        @Query("resolution") resolution: Int = 360
+    ): ResponseBody
 }

@@ -1,6 +1,6 @@
 # PeakProFit Android - Estado del Proyecto
 
-Fecha de actualizacion: 2026-05-24
+Fecha de actualizacion: 2026-06-04
 
 ## 1. Resumen ejecutivo
 
@@ -15,7 +15,9 @@ El proyecto Android tiene una base funcional con autenticacion Firebase, navegac
 - Estado de sesion modelado con `AuthState` (`Loading`, `Authenticated`, `Unauthenticated`, `Error`).
 - Manejo de credenciales con validacion minima y mapeo de errores Firebase a mensajes controlados.
 - `Home` incluye dialogo de confirmacion al salir (`ConfirmDialog`).
-- Integracion ExerciseDB V1 (`oss.exercisedb.dev`) lista para consumo de ejercicios.
+- Integracion ExerciseDB via RapidAPI operativa para listado, detalle e imagen de ejercicios.
+- La pantalla de detalle intenta cargar imagen con `GET /image?exerciseId={id}&resolution=360` y mantiene cache en memoria durante la ejecucion.
+- La ausencia de imagen en algunos ejercicios no bloquea la carga del detalle.
 
 ## 3. Estructura de codigo actual
 
@@ -35,13 +37,12 @@ Ruta base: `app/src/main/java/com/illera/peakprofit`
 ## 5. Deuda tecnica pendiente
 
 - No hay tests unitarios de `LoginViewModel`, `RegisterViewModel`, `ExercisesViewModel`.
-- No hay cache local para ejercicios (Room) ni paginacion.
-- La feature de ejercicios no incluye detalle aun (intencion explicita de esta iteracion).
+- No hay cache local persistente para ejercicios e imagenes (Room/Disco). Solo existe cache en memoria por proceso.
 - Falta externalizar todos los textos UI a `strings.xml`.
 
 ## 6. Siguiente iteracion recomendada
 
 1. Añadir tests unitarios de autenticacion y ejercicios.
-2. Implementar cache local para ejercicios y estrategia offline basica.
-3. Añadir detalle de ejercicio cuando se valide el flujo de lista.
+2. Implementar cache local para ejercicios e imagenes y estrategia offline basica.
+3. Añadir placeholder visual cuando un ejercicio no tenga imagen disponible en API.
 4. Añadir pipeline de calidad documentado (lint/format/tests).

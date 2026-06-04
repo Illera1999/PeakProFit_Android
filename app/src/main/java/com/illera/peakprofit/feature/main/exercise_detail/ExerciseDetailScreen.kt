@@ -1,8 +1,11 @@
 package com.illera.peakprofit.feature.main.exercise_detail
 
+import android.graphics.BitmapFactory
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -11,15 +14,22 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -49,6 +59,16 @@ fun ExerciseDetailScreen(
                         Text("Volver")
                     }
                 },
+                actions = {
+                    if (state.canSaveExercise) {
+                        IconButton(onClick = { }) {
+                            Icon(
+                                imageVector = Icons.Outlined.BookmarkBorder,
+                                contentDescription = "Guardar ejercicio"
+                            )
+                        }
+                    }
+                },
                 colors = TopAppBarDefaults.topAppBarColors()
             )
         }
@@ -69,11 +89,29 @@ fun ExerciseDetailScreen(
                     }
                 }
                 exercise != null -> {
+                    val imageBitmap = remember(state.imageData) {
+                        state.imageData?.let { imageBytes ->
+                            BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)?.asImageBitmap()
+                        }
+                    }
+
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.spacedBy(10.dp),
                         contentPadding = PaddingValues(bottom = 20.dp)
                     ) {
+                        if (imageBitmap != null) {
+                            item {
+                                Image(
+                                    bitmap = imageBitmap,
+                                    contentDescription = "Imagen del ejercicio ${exercise.name}",
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .aspectRatio(1.6f),
+                                    contentScale = ContentScale.Crop
+                                )
+                            }
+                        }
                         item {
                             Text(text = exercise.name, fontWeight = FontWeight.Bold)
                             Text(text = "ID: ${exercise.id}")
