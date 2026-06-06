@@ -7,6 +7,7 @@ import androidx.compose.ui.res.stringResource
 sealed interface UiText {
     data class DynamicString(val value: String) : UiText
 
+    // Permite que los ViewModel emitan referencias a recursos sin depender de Compose.
     data class StringResource(
         @param:StringRes val id: Int,
         val formatArgs: List<Any> = emptyList()

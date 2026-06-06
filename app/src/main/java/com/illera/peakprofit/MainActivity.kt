@@ -12,6 +12,8 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // AppCompatActivity es necesaria para que AppCompatDelegate pueda recrear la
+        // actividad correctamente al cambiar el idioma desde la pantalla de ajustes.
         enableEdgeToEdge()
         setContent {
             PeakProFitTheme {

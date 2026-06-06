@@ -36,9 +36,10 @@ Beneficio: DI escalable en toda la app.
 - `androidx.compose.ui:ui-tooling-preview`
 - `androidx.compose.material3:material3`
 - `androidx.activity:activity-compose`
+- `androidx.appcompat:appcompat`
 
-Motivo: stack base Compose + Material3.
-Beneficio: UI declarativa consistente y productiva.
+Motivo: stack base Compose + Material3, mas soporte AppCompat para locales por aplicacion.
+Beneficio: UI declarativa consistente y productiva, con cambio de idioma en caliente soportado por `AppCompatDelegate`.
 
 ## Arquitectura y estado
 
@@ -89,6 +90,10 @@ Beneficio: cliente HTTP tipado, parseo JSON y trazabilidad de requests.
 - `androidx.core:core-ktx`
 Motivo: extensiones Kotlin para APIs Android.
 Beneficio: codigo mas expresivo.
+
+- `androidx.datastore:datastore-preferences`
+Motivo: persistir favoritos por usuario con una API reactiva y segura para corrutinas.
+Beneficio: reemplaza un almacenamiento basado en preferencias manuales y simplifica observacion de cambios.
 
 ## Testing
 

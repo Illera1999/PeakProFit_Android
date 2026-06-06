@@ -86,6 +86,8 @@ object ExerciseModule {
     ): DataStore<Preferences> {
         return PreferenceDataStoreFactory.create(
             migrations = listOf(
+                // Conserva los ejercicios guardados si el almacenamiento previo estaba
+                // en SharedPreferences y evita perder datos al migrar a DataStore.
                 SharedPreferencesMigration(
                     context = context,
                     sharedPreferencesName = SAVED_EXERCISES_PREFS

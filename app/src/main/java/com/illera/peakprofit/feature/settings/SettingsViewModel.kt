@@ -29,6 +29,8 @@ class SettingsViewModel @Inject constructor() : ViewModel() {
         }
 
         viewModelScope.launch {
+            // AppCompat aplica el locale a nivel de aplicación y recrea las activities
+            // activas para que Compose vuelva a resolver todos los string resources.
             AppCompatDelegate.setApplicationLocales(
                 LocaleListCompat.forLanguageTags(normalizedTag)
             )
@@ -42,6 +44,7 @@ class SettingsViewModel @Inject constructor() : ViewModel() {
             .substringBefore(',')
             .ifBlank { java.util.Locale.getDefault().language }
 
+        // Reducimos variantes como `en-GB` o `es-ES` a los idiomas soportados en UI.
         return if (currentTag.startsWith("en")) "en" else "es"
     }
 }

@@ -21,6 +21,8 @@ Definidos en `Screens.kt`:
 - `RegisterNav`
 - `HomeNav`
 - `ExercisesNav`
+- `SavedExercisesNav`
+- `SettingsNav`
 - `ExerciseDetailNav`
 
 ## Flujo activo
@@ -36,9 +38,10 @@ Definidos en `Screens.kt`:
 7. La UI se adapta leyendo `AuthState`:
 - En `Home`, `Guest` muestra accion para volver al login.
 - En `Exercises`, el icono de guardar solo se muestra en `Authenticated`.
-8. Desde `Exercises`, al pulsar un item, se hace push a `ExerciseDetailNav(exerciseId)` dentro de `MainGraph`.
-9. `ExerciseDetailNav` se renderiza por encima de las tabs; al volver (`popBackStack`) reaparece la barra inferior.
-10. Logout desde `Home` navega a `LoginNav` limpiando `MainGraph`.
+8. Desde `Home`, un usuario autenticado puede abrir `SavedExercisesNav` y cualquier usuario puede abrir `SettingsNav`.
+9. Desde `Exercises` o `SavedExercises`, al pulsar un item, se hace push a `ExerciseDetailNav(exerciseId)` dentro de `MainGraph`.
+10. `SavedExercisesNav`, `SettingsNav` y `ExerciseDetailNav` se renderizan por encima de las tabs; al volver (`popBackStack`) reaparece la barra inferior.
+11. Logout desde `Home` navega a `LoginNav` limpiando `MainGraph`.
 
 ## Criterios para nuevas rutas
 

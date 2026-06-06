@@ -16,7 +16,7 @@ Responsable de reglas de negocio, entidades y contratos de repositorio.
 Responsable de implementaciones concretas (API, Firebase, mapeos, etc.).
 
 - `core/*`
-Responsable de elementos transversales: navegacion, tema, componentes UI comunes.
+Responsable de elementos transversales: navegacion, tema, componentes UI comunes y utilidades de texto localizable.
 
 ## Convencion por feature
 
@@ -30,6 +30,7 @@ Cuando la feature crezca:
 
 - `components/` para piezas UI reutilizables dentro de la feature.
 - `model/` si necesita modelos de presentacion especificos.
+- `feature/auth/components/AuthForm.kt` es la referencia actual de extraccion de UI comun entre pantallas hermanas.
 
 ## Regla de dependencias
 
@@ -45,6 +46,7 @@ Cuando la feature crezca:
 - Los `ViewModel` usan `@HiltViewModel` con constructor injection.
 - Los modulos de provision estan en `data/di/*` (`AuthModule`, `ExerciseModule`).
 - `AndroidManifest.xml` declara `android:name=".PeakProFitApp"` en `<application>`.
+- `ExerciseModule` tambien registra `DataStore<Preferences>` para persistir ejercicios guardados por usuario.
 
 ## Casos de uso activos
 
@@ -57,6 +59,11 @@ Cuando la feature crezca:
 - `GetExercisesUseCase`
 - `GetExerciseByIdUseCase`
 - `GetExerciseImageByIdUseCase`
+- `ObserveSavedExercisesUseCase`
+- `GetSavedExerciseByIdUseCase`
+- `IsExerciseSavedUseCase`
+- `SaveExerciseUseCase`
+- `RemoveSavedExerciseUseCase`
 
 ## Paginacion de ejercicios
 
@@ -75,6 +82,21 @@ Cuando la feature crezca:
 - El repositorio de ejercicios mantiene cache en memoria por `id` para evitar llamadas repetidas durante la sesion.
 - La imagen se cachea en memoria durante la vida del proceso para evitar descargas repetidas en la misma ejecucion.
 - Si la API no devuelve imagen para un ejercicio concreto, el detalle sigue siendo valido y la UI no debe tratarlo como error bloqueante.
+
+## Persistencia local de guardados
+
+- Los ejercicios guardados viven en `StorageSavedExerciseRepository`.
+- El repositorio persiste un mapa `userId -> List<Exercise>` serializado con Gson dentro de `DataStore`.
+- Las escrituras se protegen con `Mutex` para evitar sobreescrituras cuando hay operaciones concurrentes.
+- `SharedPreferencesMigration` permite mover datos previos al nuevo almacenamiento sin perder favoritos.
+
+## Localizacion y mensajes UI
+
+- Los `ViewModel` emiten errores y textos mediante `UiText` para no depender de `stringResource`.
+- Los recursos viven en `values/strings.xml` y `values-en/strings.xml`.
+- El idioma activo se cambia con `AppCompatDelegate.setApplicationLocales(...)` desde `SettingsViewModel`.
+- `MainActivity` usa `AppCompatActivity` para soportar la recreacion automática asociada a ese cambio de locale.
+- El detalle del flujo esta en [LOCALIZATION.md](./LOCALIZATION.md).
 
 ## Notas de modelado
 

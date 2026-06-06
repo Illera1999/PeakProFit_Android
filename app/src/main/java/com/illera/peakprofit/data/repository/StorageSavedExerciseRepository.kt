@@ -18,6 +18,8 @@ class StorageSavedExerciseRepository(
     private val dataStore: DataStore<Preferences>,
     private val gson: Gson
 ) : SavedExerciseRepository {
+    // Serializa las escrituras para no perder cambios cuando varias pantallas intentan
+    // guardar o borrar ejercicios casi al mismo tiempo.
     private val mutex = Mutex()
 
     override suspend fun saveExercise(userId: String, exercise: Exercise) {
@@ -81,6 +83,8 @@ class StorageSavedExerciseRepository(
     }
 
     private companion object {
+        // Una única clave almacena el mapa completo `userId -> ejercicios` para mantener
+        // sincronizada la lectura reactiva desde DataStore.
         val STORAGE_KEY = stringPreferencesKey("saved_exercises_by_user")
     }
 }
