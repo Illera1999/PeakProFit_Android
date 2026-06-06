@@ -30,6 +30,9 @@ data object ExercisesNav
 data object SavedExercisesNav
 
 @Serializable
+data object SettingsNav
+
+@Serializable
 data class ExerciseDetailNav(
     val exerciseId: String
 )

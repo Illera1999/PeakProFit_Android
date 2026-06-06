@@ -1,5 +1,6 @@
 package com.illera.peakprofit.feature.main.exercises
 
+import com.illera.peakprofit.core.ui.UiText
 import com.illera.peakprofit.domain.entity.Exercise
 
 data class ExercisesUiState(
@@ -11,5 +12,5 @@ data class ExercisesUiState(
     val query: String = "",
     val items: List<Exercise> = emptyList(),
     val filteredItems: List<Exercise> = emptyList(),
-    val errorMessage: String? = null
+    val errorMessage: UiText? = null
 )

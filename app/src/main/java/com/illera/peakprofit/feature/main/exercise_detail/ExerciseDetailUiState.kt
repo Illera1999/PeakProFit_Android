@@ -1,5 +1,6 @@
 package com.illera.peakprofit.feature.main.exercise_detail
 
+import com.illera.peakprofit.core.ui.UiText
 import com.illera.peakprofit.domain.entity.Exercise
 
 data class ExerciseDetailUiState(
@@ -8,7 +9,7 @@ data class ExerciseDetailUiState(
     val imageData: ByteArray? = null,
     val canSaveExercise: Boolean = false,
     val isExerciseSaved: Boolean = false,
-    val errorMessage: String? = null
+    val errorMessage: UiText? = null
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

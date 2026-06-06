@@ -1,7 +1,11 @@
 package com.illera.peakprofit.data.di
 
 import android.content.Context
-import android.content.SharedPreferences
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.SharedPreferencesMigration
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStoreFile
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import dagger.hilt.android.qualifiers.ApplicationContext
 import com.illera.peakprofit.BuildConfig
 import com.google.gson.Gson
@@ -77,18 +81,28 @@ object ExerciseModule {
 
     @Provides
     @Singleton
-    fun provideSavedExercisesPreferences(
+    fun provideSavedExercisesDataStore(
         @ApplicationContext context: Context
-    ): SharedPreferences {
-        return context.getSharedPreferences(SAVED_EXERCISES_PREFS, Context.MODE_PRIVATE)
+    ): DataStore<Preferences> {
+        return PreferenceDataStoreFactory.create(
+            migrations = listOf(
+                SharedPreferencesMigration(
+                    context = context,
+                    sharedPreferencesName = SAVED_EXERCISES_PREFS
+                )
+            ),
+            produceFile = {
+                context.preferencesDataStoreFile(SAVED_EXERCISES_PREFS)
+            }
+        )
     }
 
     @Provides
     @Singleton
     fun provideSavedExerciseRepository(
-        sharedPreferences: SharedPreferences,
+        dataStore: DataStore<Preferences>,
         gson: Gson
     ): SavedExerciseRepository {
-        return StorageSavedExerciseRepository(sharedPreferences, gson)
+        return StorageSavedExerciseRepository(dataStore, gson)
     }
 }

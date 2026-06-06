@@ -2,25 +2,19 @@ package com.illera.peakprofit.feature.auth.login
 
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.illera.peakprofit.R
 import com.illera.peakprofit.core.ui.ConfirmDialog
 import com.illera.peakprofit.domain.entity.AuthState
+import com.illera.peakprofit.feature.auth.components.AuthForm
 
 @Composable
 fun LoginScreen(
@@ -39,10 +33,10 @@ fun LoginScreen(
 
     if (showExitDialog) {
         ConfirmDialog(
-            title = "Salir de la app",
-            message = "¿Seguro que quieres salir?",
-            confirmText = "Salir",
-            dismissText = "Cancelar",
+            title = stringResource(R.string.exit_dialog_title),
+            message = stringResource(R.string.exit_dialog_message),
+            confirmText = stringResource(R.string.exit_dialog_confirm),
+            dismissText = stringResource(R.string.exit_dialog_dismiss),
             onConfirm = {
                 showExitDialog = false
                 activity?.finish()
@@ -55,36 +49,19 @@ fun LoginScreen(
         showExitDialog = true
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        Text("Iniciar sesion")
-        OutlinedTextField(
-            value = state.email,
-            onValueChange = viewModel::onEmailChanged,
-            label = { Text("Email") },
-            enabled = !state.isLoading
-        )
-        OutlinedTextField(
-            value = state.password,
-            onValueChange = viewModel::onPasswordChanged,
-            label = { Text("Password") },
-            enabled = !state.isLoading
-        )
-        Button(onClick = viewModel::signIn, enabled = !state.isLoading) {
-            Text("Entrar")
-        }
-        Button(onClick = onNavigateToRegister, enabled = !state.isLoading) {
-            Text("No tienes cuenta? Registrate")
-        }
-        Button(onClick = viewModel::continueAsGuest, enabled = !state.isLoading) {
-            Text("Entrar como invitado")
-        }
-        state.errorMessage?.let { message ->
-            Text(text = message)
-        }
-    }
+    AuthForm(
+        title = stringResource(R.string.login_title),
+        email = state.email,
+        password = state.password,
+        primaryActionText = stringResource(R.string.login_primary_action),
+        secondaryActionText = stringResource(R.string.login_secondary_action),
+        tertiaryActionText = stringResource(R.string.login_guest_action),
+        onEmailChanged = viewModel::onEmailChanged,
+        onPasswordChanged = viewModel::onPasswordChanged,
+        onPrimaryAction = viewModel::signIn,
+        onSecondaryAction = onNavigateToRegister,
+        onTertiaryAction = viewModel::continueAsGuest,
+        errorMessage = state.errorMessage,
+        enabled = !state.isLoading
+    )
 }

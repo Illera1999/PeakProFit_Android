@@ -17,9 +17,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.illera.peakprofit.R
+import com.illera.peakprofit.core.ui.asString
 import com.illera.peakprofit.feature.main.exercises.components.ExerciseCard
 
 @Composable
@@ -28,35 +31,40 @@ fun ExercisesScreen(
     viewModel: ExercisesViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val spacingLarge = dimensionResource(R.dimen.spacing_large)
+    val spacingMedium = dimensionResource(R.dimen.spacing_medium)
+    val spacingSmall = dimensionResource(R.dimen.spacing_small)
+    val spacingXSmall = dimensionResource(R.dimen.spacing_xsmall)
+    val spacingXLarge = dimensionResource(R.dimen.spacing_xlarge)
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+            .padding(spacingLarge),
+        verticalArrangement = Arrangement.spacedBy(spacingMedium)
     ) {
-        Text(text = "Ejercicios")
+        Text(text = stringResource(R.string.exercises_title))
         OutlinedTextField(
             value = state.query,
             onValueChange = viewModel::onQueryChanged,
             modifier = Modifier.fillMaxWidth(),
-            label = { Text("Buscar por nombre, músculo o equipo") },
+            label = { Text(stringResource(R.string.exercises_search_label)) },
             enabled = !state.isLoading && !state.isLoadingMore
         )
 
         if (state.isLoading) {
             CircularProgressIndicator()
         } else if (state.errorMessage != null) {
-            Text(text = state.errorMessage ?: "")
+            Text(text = state.errorMessage?.asString().orEmpty())
             Button(onClick = viewModel::retry) {
-                Text("Reintentar")
+                Text(stringResource(R.string.common_retry))
             }
         } else {
-            Text(text = "Resultados: ${state.filteredItems.size}")
+            Text(text = stringResource(R.string.exercises_results, state.filteredItems.size))
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(10.dp),
-                contentPadding = PaddingValues(bottom = 20.dp)
+                verticalArrangement = Arrangement.spacedBy(spacingSmall),
+                contentPadding = PaddingValues(bottom = spacingXLarge)
             ) {
                 itemsIndexed(
                     items = state.filteredItems,
@@ -84,11 +92,11 @@ fun ExercisesScreen(
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(12.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                                .padding(spacingMedium),
+                            verticalArrangement = Arrangement.spacedBy(spacingXSmall)
                         ) {
                             CircularProgressIndicator()
-                            Text(text = "Cargando más ejercicios...")
+                            Text(text = stringResource(R.string.exercises_loading_more))
                         }
                     }
                 }
@@ -97,8 +105,8 @@ fun ExercisesScreen(
                     item(key = "end_of_list") {
                         Card(modifier = Modifier.fillMaxWidth()) {
                             Text(
-                                text = "Has llegado al final de la lista.",
-                                modifier = Modifier.padding(12.dp)
+                                text = stringResource(R.string.exercises_end_of_list),
+                                modifier = Modifier.padding(spacingMedium)
                             )
                         }
                     }

@@ -16,6 +16,7 @@ import com.illera.peakprofit.feature.auth.register.RegisterScreen
 import com.illera.peakprofit.feature.auth.splash.SplashScreen
 import com.illera.peakprofit.feature.main.exercise_detail.ExerciseDetailScreen
 import com.illera.peakprofit.feature.main.saved_exercises.SavedExercisesScreen
+import com.illera.peakprofit.feature.settings.SettingsScreen
 
 @Composable
 fun PeakProFitNavHost() {
@@ -97,6 +98,9 @@ fun PeakProFitNavHost() {
                     },
                     onOpenSavedExercises = {
                         navController.navigate(SavedExercisesNav)
+                    },
+                    onOpenSettings = {
+                        navController.navigate(SettingsNav)
                     }
                 )
             }
@@ -115,6 +119,12 @@ fun PeakProFitNavHost() {
                     onOpenExerciseDetail = { exerciseId ->
                         navController.navigate(ExerciseDetailNav(exerciseId = exerciseId))
                     }
+                )
+            }
+
+            composable<SettingsNav> {
+                SettingsScreen(
+                    onBack = { navController.popBackStack() }
                 )
             }
         }

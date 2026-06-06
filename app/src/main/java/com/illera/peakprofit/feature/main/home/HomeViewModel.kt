@@ -28,7 +28,7 @@ class HomeViewModel @Inject constructor(
                         val session = authState.session
                         val displayName = session.email?.substringBefore("@")
                             ?.takeIf { it.isNotBlank() }
-                            ?: "Usuario"
+                            .orEmpty()
                         _uiState.value = _uiState.value.copy(
                             isAuthenticated = true,
                             isGuest = false,
@@ -40,7 +40,7 @@ class HomeViewModel @Inject constructor(
                         _uiState.value = _uiState.value.copy(
                             isAuthenticated = false,
                             isGuest = true,
-                            userName = "Invitado",
+                            userName = "",
                             userEmail = ""
                         )
                     }
@@ -48,7 +48,7 @@ class HomeViewModel @Inject constructor(
                         _uiState.value = _uiState.value.copy(
                             isAuthenticated = false,
                             isGuest = false,
-                            userName = "Usuario",
+                            userName = "",
                             userEmail = ""
                         )
                     }

@@ -3,6 +3,8 @@ package com.illera.peakprofit.feature.main.exercise_detail
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.illera.peakprofit.R
+import com.illera.peakprofit.core.ui.UiText
 import com.illera.peakprofit.domain.entity.AuthState
 import com.illera.peakprofit.domain.usecase.auth.ObserveSessionUseCase
 import com.illera.peakprofit.domain.usecase.exercise.GetExerciseByIdUseCase
@@ -84,7 +86,7 @@ class ExerciseDetailViewModel @Inject constructor(
                             exercise = null,
                             canSaveExercise = _uiState.value.canSaveExercise,
                             isExerciseSaved = _uiState.value.isExerciseSaved,
-                            errorMessage = "No se pudo cargar el detalle del ejercicio."
+                            errorMessage = UiText.StringResource(R.string.exercise_detail_error_load)
                         )
                     }
             }
@@ -105,7 +107,7 @@ class ExerciseDetailViewModel @Inject constructor(
             }.onFailure {
                 Log.e(TAG, "Error actualizando guardado del ejercicio ${exercise.id}", it)
                 _uiState.value = _uiState.value.copy(
-                    errorMessage = "No se pudo actualizar el ejercicio guardado."
+                    errorMessage = UiText.StringResource(R.string.exercise_detail_error_save)
                 )
             }
         }

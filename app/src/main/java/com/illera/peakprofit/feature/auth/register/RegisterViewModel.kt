@@ -6,6 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.illera.peakprofit.R
+import com.illera.peakprofit.core.ui.UiText
 import com.illera.peakprofit.domain.entity.AuthState
 import com.illera.peakprofit.domain.usecase.auth.ObserveSessionUseCase
 import com.illera.peakprofit.domain.usecase.auth.RegisterUseCase
@@ -63,25 +65,31 @@ class RegisterViewModel @Inject constructor(
         }
     }
 
-    private fun validateCredentials(email: String, password: String): String? {
-        if (email.isBlank() || password.isBlank()) return "Email y password son obligatorios"
-        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) return "Email no valido"
-        if (password.length < 6) return "La password debe tener al menos 6 caracteres"
+    private fun validateCredentials(email: String, password: String): UiText? {
+        if (email.isBlank() || password.isBlank()) {
+            return UiText.StringResource(R.string.auth_error_required_fields)
+        }
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            return UiText.StringResource(R.string.auth_error_invalid_email)
+        }
+        if (password.length < 6) {
+            return UiText.StringResource(R.string.auth_error_short_password)
+        }
         return null
     }
 
-    private fun mapAuthError(throwable: Throwable): String {
+    private fun mapAuthError(throwable: Throwable): UiText {
         return when (throwable) {
-            is FirebaseAuthInvalidCredentialsException -> "Email no valido"
-            is FirebaseNetworkException -> "Sin conexion. Revisa internet e intentalo de nuevo"
+            is FirebaseAuthInvalidCredentialsException -> UiText.StringResource(R.string.auth_error_invalid_email)
+            is FirebaseNetworkException -> UiText.StringResource(R.string.auth_error_network)
             is FirebaseAuthException -> when (throwable.errorCode) {
-                "ERROR_EMAIL_ALREADY_IN_USE" -> "Ese email ya esta registrado"
-                "ERROR_WEAK_PASSWORD" -> "La password es demasiado debil"
-                "ERROR_OPERATION_NOT_ALLOWED" -> "Registro no permitido temporalmente"
-                "ERROR_TOO_MANY_REQUESTS" -> "Demasiados intentos. Espera y vuelve a intentar"
-                else -> "No se pudo crear la cuenta"
+                "ERROR_EMAIL_ALREADY_IN_USE" -> UiText.StringResource(R.string.auth_error_email_in_use)
+                "ERROR_WEAK_PASSWORD" -> UiText.StringResource(R.string.auth_error_weak_password)
+                "ERROR_OPERATION_NOT_ALLOWED" -> UiText.StringResource(R.string.auth_error_register_disabled)
+                "ERROR_TOO_MANY_REQUESTS" -> UiText.StringResource(R.string.auth_error_too_many_requests)
+                else -> UiText.StringResource(R.string.auth_error_register_generic)
             }
-            else -> "No se pudo crear la cuenta"
+            else -> UiText.StringResource(R.string.auth_error_register_generic)
         }
     }
 }

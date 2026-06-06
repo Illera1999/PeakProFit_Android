@@ -18,6 +18,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.res.stringResource
+import com.illera.peakprofit.R
 import com.illera.peakprofit.core.ui.ConfirmDialog
 import com.illera.peakprofit.feature.main.exercises.ExercisesScreen
 import com.illera.peakprofit.feature.main.home.HomeScreen
@@ -28,6 +30,7 @@ fun MainTabsScreen(
     onNavigateToLogin: () -> Unit,
     onOpenExerciseDetail: (String) -> Unit,
     onOpenSavedExercises: () -> Unit,
+    onOpenSettings: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val activity = LocalActivity.current
@@ -35,17 +38,17 @@ fun MainTabsScreen(
     val coroutineScope = rememberCoroutineScope()
 
     val tabs = listOf(
-        TabItem(label = "Ejercicios"),
-        TabItem(label = "Perfil")
+        TabItem(label = stringResource(R.string.tab_exercises)),
+        TabItem(label = stringResource(R.string.tab_profile))
     )
     val pagerState = rememberPagerState(initialPage = 0, pageCount = { tabs.size })
 
     if (showExitDialog) {
         ConfirmDialog(
-            title = "Salir de la app",
-            message = "¿Seguro que quieres salir?",
-            confirmText = "Salir",
-            dismissText = "Cancelar",
+            title = stringResource(R.string.exit_dialog_title),
+            message = stringResource(R.string.exit_dialog_message),
+            confirmText = stringResource(R.string.exit_dialog_confirm),
+            dismissText = stringResource(R.string.exit_dialog_dismiss),
             onConfirm = {
                 showExitDialog = false
                 activity?.finish()
@@ -85,7 +88,8 @@ fun MainTabsScreen(
                 1 -> HomeScreen(
                     onLoggedOut = onLoggedOut,
                     onNavigateToLogin = onNavigateToLogin,
-                    onOpenSavedExercises = onOpenSavedExercises
+                    onOpenSavedExercises = onOpenSavedExercises,
+                    onOpenSettings = onOpenSettings
                 )
             }
         }

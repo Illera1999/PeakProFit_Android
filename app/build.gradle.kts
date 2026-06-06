@@ -31,7 +31,7 @@ android {
     defaultConfig {
         applicationId = "com.illera.peakprofit"
         // Mínimo Android soportado por la app en producción.
-        minSdk = 26
+        minSdk = 24
         // API objetivo para comportamiento y validaciones modernas del sistema.
         targetSdk = 36
         versionCode = 1
@@ -92,6 +92,8 @@ dependencies {
 
     // Android + Compose base.
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)

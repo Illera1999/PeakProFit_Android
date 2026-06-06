@@ -7,6 +7,8 @@ import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import com.illera.peakprofit.R
+import com.illera.peakprofit.core.ui.UiText
 import com.illera.peakprofit.domain.entity.AuthState
 import com.illera.peakprofit.domain.usecase.auth.ContinueAsGuestUseCase
 import com.illera.peakprofit.domain.usecase.auth.ObserveSessionUseCase
@@ -70,24 +72,30 @@ class LoginViewModel @Inject constructor(
         continueAsGuestUseCase()
     }
 
-    private fun validateCredentials(email: String, password: String): String? {
-        if (email.isBlank() || password.isBlank()) return "Email y password son obligatorios"
-        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) return "Email no valido"
-        if (password.length < 6) return "La password debe tener al menos 6 caracteres"
+    private fun validateCredentials(email: String, password: String): UiText? {
+        if (email.isBlank() || password.isBlank()) {
+            return UiText.StringResource(R.string.auth_error_required_fields)
+        }
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            return UiText.StringResource(R.string.auth_error_invalid_email)
+        }
+        if (password.length < 6) {
+            return UiText.StringResource(R.string.auth_error_short_password)
+        }
         return null
     }
 
-    private fun mapAuthError(throwable: Throwable): String {
+    private fun mapAuthError(throwable: Throwable): UiText {
         return when (throwable) {
-            is FirebaseAuthInvalidUserException -> "Usuario no encontrado"
-            is FirebaseAuthInvalidCredentialsException -> "Credenciales invalidas"
-            is FirebaseNetworkException -> "Sin conexion. Revisa internet e intentalo de nuevo"
+            is FirebaseAuthInvalidUserException -> UiText.StringResource(R.string.auth_error_user_not_found)
+            is FirebaseAuthInvalidCredentialsException -> UiText.StringResource(R.string.auth_error_invalid_credentials)
+            is FirebaseNetworkException -> UiText.StringResource(R.string.auth_error_network)
             is FirebaseAuthException -> when (throwable.errorCode) {
-                "ERROR_USER_DISABLED" -> "Tu usuario esta deshabilitado"
-                "ERROR_TOO_MANY_REQUESTS" -> "Demasiados intentos. Espera y vuelve a intentar"
-                else -> "No se pudo iniciar sesion"
+                "ERROR_USER_DISABLED" -> UiText.StringResource(R.string.auth_error_user_disabled)
+                "ERROR_TOO_MANY_REQUESTS" -> UiText.StringResource(R.string.auth_error_too_many_requests)
+                else -> UiText.StringResource(R.string.auth_error_sign_in_generic)
             }
-            else -> "No se pudo iniciar sesion"
+            else -> UiText.StringResource(R.string.auth_error_sign_in_generic)
         }
     }
 }

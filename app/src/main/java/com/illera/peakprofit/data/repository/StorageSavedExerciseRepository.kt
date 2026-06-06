@@ -1,26 +1,29 @@
 package com.illera.peakprofit.data.repository
 
-import android.content.SharedPreferences
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.illera.peakprofit.domain.entity.Exercise
 import com.illera.peakprofit.domain.repository.SavedExerciseRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 class StorageSavedExerciseRepository(
-    private val sharedPreferences: SharedPreferences,
+    private val dataStore: DataStore<Preferences>,
     private val gson: Gson
 ) : SavedExerciseRepository {
     private val mutex = Mutex()
-    private val storage = MutableStateFlow(readStorage())
 
     override suspend fun saveExercise(userId: String, exercise: Exercise) {
         mutex.withLock {
-            val currentByUser = storage.value[userId].orEmpty().associateByTo(linkedMapOf()) { it.id }
+            val storage = readStorage()
+            val currentByUser = storage[userId].orEmpty().associateByTo(linkedMapOf()) { it.id }
             currentByUser[exercise.id] = exercise
             persistUserExercises(userId = userId, exercises = currentByUser.values.toList())
         }
@@ -28,49 +31,56 @@ class StorageSavedExerciseRepository(
 
     override suspend fun removeSavedExercise(userId: String, exerciseId: String) {
         mutex.withLock {
-            val currentByUser = storage.value[userId].orEmpty().associateByTo(linkedMapOf()) { it.id }
+            val storage = readStorage()
+            val currentByUser = storage[userId].orEmpty().associateByTo(linkedMapOf()) { it.id }
             currentByUser.remove(exerciseId)
             persistUserExercises(userId = userId, exercises = currentByUser.values.toList())
         }
     }
 
     override suspend fun getSavedExerciseById(userId: String, exerciseId: String): Exercise? {
-        return storage.value[userId].orEmpty().firstOrNull { it.id == exerciseId }
+        return readStorage()[userId].orEmpty().firstOrNull { it.id == exerciseId }
     }
 
     override fun observeSavedExercises(userId: String): Flow<List<Exercise>> {
-        return storage.map { savedByUser -> savedByUser[userId].orEmpty() }
-    }
-
-    override fun isExerciseSaved(userId: String, exerciseId: String): Flow<Boolean> {
-        return storage.map { savedByUser ->
-            savedByUser[userId].orEmpty().any { it.id == exerciseId }
+        return dataStore.data.map { preferences ->
+            deserializeStorage(preferences[STORAGE_KEY].orEmpty())[userId].orEmpty()
         }
     }
 
-    private fun persistUserExercises(userId: String, exercises: List<Exercise>) {
-        val updatedStorage = storage.value.toMutableMap().apply {
+    override fun isExerciseSaved(userId: String, exerciseId: String): Flow<Boolean> {
+        return dataStore.data.map { preferences ->
+            deserializeStorage(preferences[STORAGE_KEY].orEmpty())[userId]
+                .orEmpty()
+                .any { it.id == exerciseId }
+        }
+    }
+
+    private suspend fun persistUserExercises(userId: String, exercises: List<Exercise>) {
+        val updatedStorage = readStorage().toMutableMap().apply {
             if (exercises.isEmpty()) {
                 remove(userId)
             } else {
                 put(userId, exercises)
             }
         }
-        storage.value = updatedStorage
-        sharedPreferences.edit()
-            .putString(STORAGE_KEY, gson.toJson(updatedStorage))
-            .apply()
+        dataStore.edit { preferences ->
+            preferences[STORAGE_KEY] = gson.toJson(updatedStorage)
+        }
     }
 
-    private fun readStorage(): Map<String, List<Exercise>> {
-        val raw = sharedPreferences.getString(STORAGE_KEY, null).orEmpty()
-        if (raw.isBlank()) return emptyMap()
+    private suspend fun readStorage(): Map<String, List<Exercise>> {
+        val raw = dataStore.data.first()[STORAGE_KEY].orEmpty()
+        return deserializeStorage(raw)
+    }
 
+    private fun deserializeStorage(raw: String): Map<String, List<Exercise>> {
+        if (raw.isBlank()) return emptyMap()
         val type = object : TypeToken<Map<String, List<Exercise>>>() {}.type
         return gson.fromJson<Map<String, List<Exercise>>>(raw, type) ?: emptyMap()
     }
 
     private companion object {
-        const val STORAGE_KEY = "saved_exercises_by_user"
+        val STORAGE_KEY = stringPreferencesKey("saved_exercises_by_user")
     }
 }

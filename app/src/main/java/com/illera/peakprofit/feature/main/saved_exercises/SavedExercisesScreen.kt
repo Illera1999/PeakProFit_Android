@@ -12,15 +12,16 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.illera.peakprofit.R
+import com.illera.peakprofit.core.ui.ScreenTopBar
+import com.illera.peakprofit.core.ui.asString
 import com.illera.peakprofit.feature.main.exercises.components.ExerciseCard
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -32,17 +33,16 @@ fun SavedExercisesScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val errorMessage = state.errorMessage
+    val spacingLarge = dimensionResource(R.dimen.spacing_large)
+    val spacingMedium = dimensionResource(R.dimen.spacing_medium)
+    val spacingSmall = dimensionResource(R.dimen.spacing_small)
+    val spacingXLarge = dimensionResource(R.dimen.spacing_xlarge)
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("Ejercicios guardados") },
-                navigationIcon = {
-                    TextButton(onClick = onBack) {
-                        Text("Volver")
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors()
+            ScreenTopBar(
+                title = stringResource(R.string.saved_exercises_title),
+                onBack = onBack
             )
         }
     ) { paddingValues ->
@@ -50,28 +50,28 @@ fun SavedExercisesScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+                .padding(spacingLarge),
+            verticalArrangement = Arrangement.spacedBy(spacingMedium)
         ) {
             when {
                 !state.isAuthenticated -> {
-                    Text(text = "Necesitas iniciar sesión para ver los ejercicios guardados.")
+                    Text(text = stringResource(R.string.saved_exercises_sign_in_required))
                     Button(onClick = onBack) {
-                        Text("Volver")
+                        Text(stringResource(R.string.common_back))
                     }
                 }
                 errorMessage != null -> {
-                    Text(text = errorMessage)
+                    Text(text = errorMessage.asString())
                 }
                 state.items.isEmpty() -> {
-                    Text(text = "No hay ejercicios guardados todavía.")
+                    Text(text = stringResource(R.string.saved_exercises_empty))
                 }
                 else -> {
-                    Text(text = "Guardados: ${state.items.size}")
+                    Text(text = stringResource(R.string.saved_exercises_count, state.items.size))
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.spacedBy(10.dp),
-                        contentPadding = PaddingValues(bottom = 20.dp)
+                        verticalArrangement = Arrangement.spacedBy(spacingSmall),
+                        contentPadding = PaddingValues(bottom = spacingXLarge)
                     ) {
                         items(
                             items = state.items,
