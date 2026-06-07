@@ -1,4 +1,4 @@
-package com.illera.peakprofit.feature.settings
+package com.illera.peakprofit.feature.main.home.settings
 
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor() : ViewModel() {
@@ -42,7 +43,7 @@ class SettingsViewModel @Inject constructor() : ViewModel() {
         val appLocales = AppCompatDelegate.getApplicationLocales()
         val currentTag = appLocales.toLanguageTags()
             .substringBefore(',')
-            .ifBlank { java.util.Locale.getDefault().language }
+            .ifBlank { Locale.getDefault().language }
 
         // Reducimos variantes como `en-GB` o `es-ES` a los idiomas soportados en UI.
         return if (currentTag.startsWith("en")) "en" else "es"
