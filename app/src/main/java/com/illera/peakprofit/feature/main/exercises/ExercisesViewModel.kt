@@ -1,9 +1,9 @@
 package com.illera.peakprofit.feature.main.exercises
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.illera.peakprofit.R
+import com.illera.peakprofit.core.Logger
 import com.illera.peakprofit.core.ui.UiText
 import com.illera.peakprofit.domain.entity.AuthState
 import com.illera.peakprofit.domain.entity.Exercise
@@ -86,7 +86,7 @@ class ExercisesViewModel @Inject constructor(
                     saveExerciseUseCase(userId = userId, exercise = exerciseDetail)
                 }
             }.onFailure {
-                Log.e(TAG, "Error actualizando guardado del ejercicio $exerciseId", it)
+                Logger.e(TAG, "Error actualizando guardado del ejercicio $exerciseId", it)
                 _uiState.value = _uiState.value.copy(
                     errorMessage = UiText.StringResource(R.string.exercises_error_save)
                 )
@@ -136,7 +136,7 @@ class ExercisesViewModel @Inject constructor(
                     )
                 }
                 .onFailure {
-                    Log.e(TAG, "Error cargando más ejercicios", it)
+                    Logger.e(TAG, "Error cargando más ejercicios", it)
                     _uiState.value = _uiState.value.copy(
                         isLoadingMore = false,
                         errorMessage = UiText.StringResource(R.string.exercises_error_load_more)
@@ -167,7 +167,7 @@ class ExercisesViewModel @Inject constructor(
                     )
                 }
                 .onFailure {
-                    Log.e(TAG, "Error cargando ejercicios", it)
+                    Logger.e(TAG, "Error cargando ejercicios", it)
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
                         isLoadingMore = false,

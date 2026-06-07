@@ -1,9 +1,9 @@
 package com.illera.peakprofit.feature.main.exercise_detail
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.illera.peakprofit.R
+import com.illera.peakprofit.core.Logger
 import com.illera.peakprofit.core.ui.UiText
 import com.illera.peakprofit.domain.entity.AuthState
 import com.illera.peakprofit.domain.usecase.auth.ObserveSessionUseCase
@@ -66,7 +66,11 @@ class ExerciseDetailViewModel @Inject constructor(
                     .onSuccess { exercise ->
                         val imageData = runCatching { imageDeferred.await() }
                             .onFailure {
-                                Log.w(TAG, "No se pudo cargar la imagen del ejercicio $exerciseId", it)
+                                Logger.w(
+                                    TAG,
+                                    "No se pudo cargar la imagen del ejercicio $exerciseId",
+                                    it
+                                )
                             }
                             .getOrNull()
 
@@ -80,7 +84,7 @@ class ExerciseDetailViewModel @Inject constructor(
                         )
                     }
                     .onFailure {
-                        Log.e(TAG, "Error cargando detalle del ejercicio $exerciseId", it)
+                        Logger.e(TAG, "Error cargando detalle del ejercicio $exerciseId", it)
                         _uiState.value = ExerciseDetailUiState(
                             isLoading = false,
                             exercise = null,
@@ -105,7 +109,7 @@ class ExerciseDetailViewModel @Inject constructor(
                     saveExerciseUseCase(userId = userId, exercise = exercise)
                 }
             }.onFailure {
-                Log.e(TAG, "Error actualizando guardado del ejercicio ${exercise.id}", it)
+                Logger.e(TAG, "Error actualizando guardado del ejercicio ${exercise.id}", it)
                 _uiState.value = _uiState.value.copy(
                     errorMessage = UiText.StringResource(R.string.exercise_detail_error_save)
                 )

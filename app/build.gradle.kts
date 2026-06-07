@@ -53,10 +53,33 @@ android {
         buildConfigField("String", "RAPID_API_BASE_URL", "\"$rapidApiBaseUrl\"")
     }
 
+    flavorDimensions += "environment"
+
+    productFlavors {
+        create("develop") {
+            dimension = "environment"
+            versionNameSuffix = "-develop"
+            resValue("string", "app_name", "PeakProFit Develop")
+            buildConfigField("String", "ENVIRONMENT", "\"develop\"")
+        }
+        create("production") {
+            dimension = "environment"
+            resValue("string", "app_name", "PeakProFit")
+            buildConfigField("String", "ENVIRONMENT", "\"production\"")
+        }
+    }
+
     buildTypes {
+        debug {
+            versionNameSuffix = "-debug"
+            isDebuggable = true
+            buildConfigField("boolean", "ALLOW_LOGS", "true")
+        }
         release {
             // De momento sin shrinking/obfuscation para simplificar debug y distribución temprana.
             isMinifyEnabled = false
+            isDebuggable = false
+            buildConfigField("boolean", "ALLOW_LOGS", "false")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -73,6 +96,24 @@ android {
         compose = true
         // Generación de clase BuildConfig con constantes de entorno.
         buildConfig = true
+        // Permite inyectar recursos por variante con resValue(...).
+        resValues = true
+    }
+}
+
+androidComponents {
+    beforeVariants { variantBuilder ->
+        val environment = variantBuilder.productFlavors
+            .find { (dimension, _) -> dimension == "environment" }
+            ?.second
+
+        val allowed = when (environment) {
+            "develop" -> variantBuilder.buildType == "debug"
+            "production" -> variantBuilder.buildType == "release"
+            else -> true
+        }
+
+        variantBuilder.enable = allowed
     }
 }
 
