@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools" >
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <!-- Declara los idiomas soportados para que Android y AppCompat sincronicen
          el selector de idioma de la app con los recursos disponibles. -->

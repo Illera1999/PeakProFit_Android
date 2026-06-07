@@ -8,6 +8,7 @@ import com.illera.peakprofit.domain.entity.AuthState
 import com.illera.peakprofit.domain.usecase.auth.ObserveSessionUseCase
 import com.illera.peakprofit.domain.usecase.exercise.ObserveSavedExercisesUseCase
 import com.illera.peakprofit.domain.usecase.exercise.RemoveSavedExerciseUseCase
+import com.illera.peakprofit.domain.usecase.exercise.UpdateSavedExerciseNoteUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Job
@@ -20,7 +21,8 @@ import kotlinx.coroutines.launch
 class SavedExercisesViewModel @Inject constructor(
     private val observeSessionUseCase: ObserveSessionUseCase,
     private val observeSavedExercisesUseCase: ObserveSavedExercisesUseCase,
-    private val removeSavedExerciseUseCase: RemoveSavedExerciseUseCase
+    private val removeSavedExerciseUseCase: RemoveSavedExerciseUseCase,
+    private val updateSavedExerciseNoteUseCase: UpdateSavedExerciseNoteUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(SavedExercisesUiState())
     val uiState: StateFlow<SavedExercisesUiState> = _uiState.asStateFlow()
@@ -39,6 +41,23 @@ class SavedExercisesViewModel @Inject constructor(
             }.onFailure {
                 _uiState.value = _uiState.value.copy(
                     errorMessage = UiText.StringResource(R.string.saved_exercises_error_update)
+                )
+            }
+        }
+    }
+
+    fun onSavedNoteChanged(exerciseId: String, note: String) {
+        val userId = currentUserId ?: return
+        viewModelScope.launch {
+            runCatching {
+                updateSavedExerciseNoteUseCase(
+                    userId = userId,
+                    exerciseId = exerciseId,
+                    note = note
+                )
+            }.onFailure {
+                _uiState.value = _uiState.value.copy(
+                    errorMessage = UiText.StringResource(R.string.saved_exercises_error_note_update)
                 )
             }
         }

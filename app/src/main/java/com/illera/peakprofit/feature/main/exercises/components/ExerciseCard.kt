@@ -29,6 +29,7 @@ fun ExerciseCard(
     isSaved: Boolean,
     onOpenDetail: (String) -> Unit,
     onSaveClick: (String) -> Unit,
+    extraContent: (@Composable () -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     val spacingMedium = dimensionResource(R.dimen.spacing_medium)
@@ -63,6 +64,7 @@ fun ExerciseCard(
             Text(text = stringResource(R.string.exercise_body_part, exercise.bodyParts.joinToString()))
             Text(text = stringResource(R.string.exercise_target_muscles, exercise.targetMuscles.joinToString()))
             Text(text = stringResource(R.string.exercise_equipment, exercise.equipments.joinToString()))
+            extraContent?.invoke()
         }
     }
 }

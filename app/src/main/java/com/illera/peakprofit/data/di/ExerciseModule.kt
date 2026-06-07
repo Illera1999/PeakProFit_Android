@@ -11,8 +11,10 @@ import com.illera.peakprofit.BuildConfig
 import com.google.gson.Gson
 import com.illera.peakprofit.data.remote.ExerciseDbApi
 import com.illera.peakprofit.data.repository.ExerciseDbRepository
+import com.illera.peakprofit.data.repository.LocalMotivationalAudioRepository
 import com.illera.peakprofit.data.repository.StorageSavedExerciseRepository
 import com.illera.peakprofit.domain.repository.ExerciseRepository
+import com.illera.peakprofit.domain.repository.MotivationalAudioRepository
 import com.illera.peakprofit.domain.repository.SavedExerciseRepository
 import dagger.Module
 import dagger.Provides
@@ -106,5 +108,13 @@ object ExerciseModule {
         gson: Gson
     ): SavedExerciseRepository {
         return StorageSavedExerciseRepository(dataStore, gson)
+    }
+
+    @Provides
+    @Singleton
+    fun provideMotivationalAudioRepository(
+        repository: LocalMotivationalAudioRepository
+    ): MotivationalAudioRepository {
+        return repository
     }
 }

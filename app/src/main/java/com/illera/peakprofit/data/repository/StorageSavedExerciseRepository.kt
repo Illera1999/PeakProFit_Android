@@ -31,6 +31,17 @@ class StorageSavedExerciseRepository(
         }
     }
 
+    override suspend fun updateSavedExerciseNote(userId: String, exerciseId: String, note: String) {
+        mutex.withLock {
+            val storage = readStorage()
+            val currentByUser = storage[userId].orEmpty().associateByTo(linkedMapOf()) { it.id }
+            val currentExercise = currentByUser[exerciseId] ?: return
+            // Solo muta la nota asociada al guardado; el resto de datos del ejercicio se conserva.
+            currentByUser[exerciseId] = currentExercise.copy(savedNote = note)
+            persistUserExercises(userId = userId, exercises = currentByUser.values.toList())
+        }
+    }
+
     override suspend fun removeSavedExercise(userId: String, exerciseId: String) {
         mutex.withLock {
             val storage = readStorage()

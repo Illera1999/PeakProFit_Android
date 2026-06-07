@@ -24,7 +24,9 @@ import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
@@ -34,6 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.illera.peakprofit.R
+import com.illera.peakprofit.core.ui.ConfirmDialog
 import com.illera.peakprofit.core.ui.ScreenTopBar
 import com.illera.peakprofit.core.ui.asString
 
@@ -45,6 +48,7 @@ fun ExerciseDetailScreen(
     viewModel: ExerciseDetailViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    var showRemoveConfirmation by remember { mutableStateOf(false) }
     val errorMessage = state.errorMessage
     val exercise = state.exercise
     val spacingLarge = dimensionResource(R.dimen.spacing_large)
@@ -56,6 +60,23 @@ fun ExerciseDetailScreen(
         viewModel.load(exerciseId)
     }
 
+    if (showRemoveConfirmation) {
+        ConfirmDialog(
+            title = stringResource(R.string.saved_exercises_remove_title),
+            message = stringResource(
+                R.string.saved_exercises_remove_message,
+                exercise?.name.orEmpty()
+            ),
+            confirmText = stringResource(R.string.saved_exercises_remove_confirm),
+            dismissText = stringResource(R.string.exit_dialog_dismiss),
+            onConfirm = {
+                showRemoveConfirmation = false
+                viewModel.onSaveClicked()
+            },
+            onDismiss = { showRemoveConfirmation = false }
+        )
+    }
+
     Scaffold(
         topBar = {
             ScreenTopBar(
@@ -63,7 +84,15 @@ fun ExerciseDetailScreen(
                 onBack = onBack,
                 actions = {
                     if (state.canSaveExercise) {
-                        IconButton(onClick = viewModel::onSaveClicked) {
+                        IconButton(
+                            onClick = {
+                                if (state.isExerciseSaved) {
+                                    showRemoveConfirmation = true
+                                } else {
+                                    viewModel.onSaveClicked()
+                                }
+                            }
+                        ) {
                             Icon(
                                 imageVector = if (state.isExerciseSaved) {
                                     Icons.Filled.Bookmark

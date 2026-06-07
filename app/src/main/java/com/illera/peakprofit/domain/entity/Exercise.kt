@@ -11,5 +11,6 @@ data class Exercise(
     val instructions: List<String>,
     val description: String,
     val difficulty: String,
-    val category: String
+    val category: String,
+    val savedNote: String = ""
 )
