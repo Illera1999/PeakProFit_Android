@@ -21,6 +21,26 @@ val localProps = Properties().apply {
     if (file.exists()) file.inputStream().use { this.load(it) }
 }
 
+fun localStringProperty(name: String, defaultValue: String = ""): String {
+    return (localProps[name] as? String) ?: defaultValue
+}
+
+val defaultRapidApiKey = localStringProperty("RAPID_API_KEY")
+val defaultRapidApiHost = localStringProperty(
+    name = "RAPID_API_HOST",
+    defaultValue = "exercisedb.p.rapidapi.com"
+)
+val defaultRapidApiBaseUrl = localStringProperty(
+    name = "RAPID_API_BASE_URL",
+    defaultValue = "https://exercisedb.p.rapidapi.com/"
+)
+val releaseStoreFile = localStringProperty("RELEASE_STORE_FILE")
+val hasReleaseSigning =
+    releaseStoreFile.isNotBlank() &&
+        localStringProperty("RELEASE_STORE_PASSWORD").isNotBlank() &&
+        localStringProperty("RELEASE_KEY_ALIAS").isNotBlank() &&
+        localStringProperty("RELEASE_KEY_PASSWORD").isNotBlank()
+
 android {
     namespace = "com.illera.peakprofit"
     // API de compilación usada por el toolchain.
@@ -41,16 +61,10 @@ android {
 
         // Valores remotos configurables por entorno.
         // Si no existen en local.properties se usan defaults seguros para desarrollo.
-        val rapidApiKey = (localProps["RAPID_API_KEY"] as? String) ?: ""
-        val rapidApiHost = (localProps["RAPID_API_HOST"] as? String)
-            ?: "exercisedb.p.rapidapi.com"
-        val rapidApiBaseUrl = (localProps["RAPID_API_BASE_URL"] as? String)
-            ?: "https://exercisedb.p.rapidapi.com/"
-
         // Se exponen en BuildConfig para consumo centralizado en la capa data.
-        buildConfigField("String", "RAPID_API_KEY", "\"$rapidApiKey\"")
-        buildConfigField("String", "RAPID_API_HOST", "\"$rapidApiHost\"")
-        buildConfigField("String", "RAPID_API_BASE_URL", "\"$rapidApiBaseUrl\"")
+        buildConfigField("String", "RAPID_API_KEY", "\"$defaultRapidApiKey\"")
+        buildConfigField("String", "RAPID_API_HOST", "\"$defaultRapidApiHost\"")
+        buildConfigField("String", "RAPID_API_BASE_URL", "\"$defaultRapidApiBaseUrl\"")
     }
 
     flavorDimensions += "environment"
@@ -59,13 +73,56 @@ android {
         create("develop") {
             dimension = "environment"
             versionNameSuffix = "-develop"
-            resValue("string", "app_name", "PeakProFit Develop")
             buildConfigField("String", "ENVIRONMENT", "\"develop\"")
+            buildConfigField(
+                "String",
+                "RAPID_API_KEY",
+                "\"${localStringProperty("DEVELOP_RAPID_API_KEY", defaultRapidApiKey)}\""
+            )
+            buildConfigField(
+                "String",
+                "RAPID_API_HOST",
+                "\"${localStringProperty("DEVELOP_RAPID_API_HOST", defaultRapidApiHost)}\""
+            )
+            buildConfigField(
+                "String",
+                "RAPID_API_BASE_URL",
+                "\"${localStringProperty("DEVELOP_RAPID_API_BASE_URL", defaultRapidApiBaseUrl)}\""
+            )
         }
         create("production") {
             dimension = "environment"
-            resValue("string", "app_name", "PeakProFit")
             buildConfigField("String", "ENVIRONMENT", "\"production\"")
+            buildConfigField(
+                "String",
+                "RAPID_API_KEY",
+                "\"${localStringProperty("PRODUCTION_RAPID_API_KEY", defaultRapidApiKey)}\""
+            )
+            buildConfigField(
+                "String",
+                "RAPID_API_HOST",
+                "\"${localStringProperty("PRODUCTION_RAPID_API_HOST", defaultRapidApiHost)}\""
+            )
+            buildConfigField(
+                "String",
+                "RAPID_API_BASE_URL",
+                "\"${localStringProperty("PRODUCTION_RAPID_API_BASE_URL", defaultRapidApiBaseUrl)}\""
+            )
+        }
+    }
+
+    signingConfigs {
+        create("localRelease") {
+            initWith(getByName("debug"))
+        }
+
+        if (hasReleaseSigning) {
+            getByName("localRelease").apply {
+                storeFile = rootProject.file(releaseStoreFile)
+                storePassword = localStringProperty("RELEASE_STORE_PASSWORD")
+                keyAlias = localStringProperty("RELEASE_KEY_ALIAS")
+                keyPassword = localStringProperty("RELEASE_KEY_PASSWORD")
+            }
         }
     }
 
@@ -79,6 +136,7 @@ android {
             // De momento sin shrinking/obfuscation para simplificar debug y distribución temprana.
             isMinifyEnabled = false
             isDebuggable = false
+            signingConfig = signingConfigs.getByName("localRelease")
             buildConfigField("boolean", "ALLOW_LOGS", "false")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -96,8 +154,6 @@ android {
         compose = true
         // Generación de clase BuildConfig con constantes de entorno.
         buildConfig = true
-        // Permite inyectar recursos por variante con resValue(...).
-        resValues = true
     }
 }
 
