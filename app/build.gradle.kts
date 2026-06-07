@@ -85,6 +85,10 @@ dependencies {
     implementation(libs.retrofit.converter.gson)
     implementation(libs.okhttp.logging.interceptor)
 
+    // Nav 3
+    implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.navigation3.ui)
+
     // DI.
     implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)

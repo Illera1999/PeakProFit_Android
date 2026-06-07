@@ -14,9 +14,11 @@ lifecycleRuntimeKtx = "2.10.0"
 lifecycleRuntimeCompose = "2.10.0"
 lifecycleViewmodelCompose = "2.10.0"
 activityCompose = "1.13.0"
-composeBom = "2024.09.00"
+composeBom = "2026.05.01"
 # Navigation Compose con rutas tipadas.
 navCompose = "2.9.8"
+nav3Core = "1.1.2"
+
 # Coroutines bridge para APIs Task de Google/Firebase.
 coroutinesPlayServices = "1.11.0"
 # Auth de Firebase (email/password y sesión).
@@ -29,10 +31,10 @@ hiltNavigationCompose = "1.3.0"
 # Plugin de procesado de anotaciones con KSP.
 ksp = "2.3.7"
 # Cliente HTTP + serialización JSON para API remota.
-retrofit = "2.11.0"
-okhttpLogging = "4.12.0"
+retrofit = "3.0.0"
+okhttpLogging = "5.3.2"
 appcompat = "1.7.1"
-datastorePreferences = "1.1.7"
+datastorePreferences = "1.2.1"
 
 [libraries]
 # Dependencias del runtime y tests del módulo app.
@@ -64,6 +66,9 @@ retrofit-converter-gson = { group = "com.squareup.retrofit2", name = "converter-
 okhttp-logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttpLogging" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastorePreferences" }
+
+androidx-navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "nav3Core"}
+androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "nav3Core"}
 
 
 [plugins]
