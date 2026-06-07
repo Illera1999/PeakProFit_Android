@@ -77,8 +77,7 @@ android {
 }
 
 dependencies {
-    // Navegación y capa remota.
-    implementation(libs.androidx.navigation.compose)
+    // Capa remota.
     implementation(libs.firebase.auth)
     implementation(libs.kotlinx.coroutines.play.services)
     implementation(libs.retrofit)
@@ -91,7 +90,7 @@ dependencies {
 
     // DI.
     implementation(libs.hilt.android)
-    implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.androidx.hilt.lifecycle.viewmodel.compose)
     ksp(libs.hilt.compiler)
 
     // Android + Compose base.
