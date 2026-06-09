@@ -68,6 +68,13 @@ class ExercisesViewModel @Inject constructor(
                             canSaveExercises = false,
                             savedExerciseIds = emptySet()
                         )
+                        val current = _uiState.value
+                        _uiState.value = current.copy(
+                            filteredItems = filterItems(
+                                items = current.items,
+                                query = current.query
+                            )
+                        )
                     }
                 }
             }
@@ -96,7 +103,10 @@ class ExercisesViewModel @Inject constructor(
 
     fun onQueryChanged(query: String) {
         val current = _uiState.value
-        val filtered = filterItems(current.items, query)
+        val filtered = filterItems(
+            items = current.items,
+            query = query
+        )
 
         _uiState.value = current.copy(
             query = query,
@@ -131,7 +141,10 @@ class ExercisesViewModel @Inject constructor(
                         isLoadingMore = false,
                         hasMore = hasMore,
                         items = merged,
-                        filteredItems = filterItems(merged, _uiState.value.query),
+                        filteredItems = filterItems(
+                            items = merged,
+                            query = _uiState.value.query
+                        ),
                         errorMessage = null
                     )
                 }
@@ -162,7 +175,10 @@ class ExercisesViewModel @Inject constructor(
                         isLoadingMore = false,
                         hasMore = items.size == PAGE_SIZE,
                         items = items,
-                        filteredItems = filterItems(items, _uiState.value.query),
+                        filteredItems = filterItems(
+                            items = items,
+                            query = _uiState.value.query
+                        ),
                         errorMessage = null
                     )
                 }
@@ -179,10 +195,8 @@ class ExercisesViewModel @Inject constructor(
 
     private fun filterItems(items: List<Exercise>, query: String): List<Exercise> {
         val normalizedQuery = query.trim()
-        if (normalizedQuery.isBlank()) return items
-
         return items.filter { exercise ->
-            exercise.name.contains(normalizedQuery, ignoreCase = true) ||
+            normalizedQuery.isBlank() || exercise.name.contains(normalizedQuery, ignoreCase = true) ||
                 exercise.bodyParts.any { it.contains(normalizedQuery, ignoreCase = true) } ||
                 exercise.targetMuscles.any { it.contains(normalizedQuery, ignoreCase = true) } ||
                 exercise.equipments.any { it.contains(normalizedQuery, ignoreCase = true) }
@@ -193,8 +207,13 @@ class ExercisesViewModel @Inject constructor(
         savedExercisesJob?.cancel()
         savedExercisesJob = viewModelScope.launch {
             observeSavedExercisesUseCase(userId).collect { savedExercises ->
+                val savedIds = savedExercises.mapTo(mutableSetOf()) { it.id }
                 _uiState.value = _uiState.value.copy(
-                    savedExerciseIds = savedExercises.mapTo(mutableSetOf()) { it.id }
+                    savedExerciseIds = savedIds,
+                    filteredItems = filterItems(
+                        items = _uiState.value.items,
+                        query = _uiState.value.query
+                    )
                 )
             }
         }

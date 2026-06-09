@@ -45,10 +45,19 @@ class RegisterViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(password = value)
     }
 
+    fun onConfirmPasswordChanged(value: String) {
+        _uiState.value = _uiState.value.copy(confirmPassword = value)
+    }
+
     fun register() {
         val email = _uiState.value.email.trim()
         val password = _uiState.value.password
-        val validationError = validateCredentials(email = email, password = password)
+        val confirmPassword = _uiState.value.confirmPassword
+        val validationError = validateCredentials(
+            email = email,
+            password = password,
+            confirmPassword = confirmPassword
+        )
         if (validationError != null) {
             _uiState.value = _uiState.value.copy(errorMessage = validationError)
             return
@@ -65,15 +74,18 @@ class RegisterViewModel @Inject constructor(
         }
     }
 
-    private fun validateCredentials(email: String, password: String): UiText? {
-        if (email.isBlank() || password.isBlank()) {
-            return UiText.StringResource(R.string.auth_error_required_fields)
+    private fun validateCredentials(email: String, password: String, confirmPassword: String): UiText? {
+        if (email.isBlank() || password.isBlank() || confirmPassword.isBlank()) {
+            return UiText.StringResource(R.string.auth_error_required_register_fields)
         }
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             return UiText.StringResource(R.string.auth_error_invalid_email)
         }
         if (password.length < 6) {
             return UiText.StringResource(R.string.auth_error_short_password)
+        }
+        if (password != confirmPassword) {
+            return UiText.StringResource(R.string.auth_error_passwords_do_not_match)
         }
         return null
     }

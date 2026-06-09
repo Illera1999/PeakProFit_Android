@@ -6,9 +6,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.background
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Language
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -19,7 +24,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.illera.peakprofit.R
+import com.illera.peakprofit.core.theme.PeakTheme
+import com.illera.peakprofit.core.theme.body
+import com.illera.peakprofit.core.theme.bodyMuted
+import com.illera.peakprofit.core.theme.screenTitle
+import com.illera.peakprofit.core.theme.sectionLabel
 import com.illera.peakprofit.core.ui.ScreenTopBar
+import com.illera.peakprofit.core.ui.components.PeakSectionCard
 
 @Composable
 fun SettingsScreen(
@@ -49,38 +60,64 @@ fun SettingsScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .background(PeakTheme.colors.canvas)
                 .padding(spacingLarge),
             verticalArrangement = Arrangement.spacedBy(spacingLarge)
         ) {
             Text(
                 text = stringResource(R.string.settings_title),
-                style = MaterialTheme.typography.headlineMedium
+                style = MaterialTheme.typography.screenTitle,
+                color = PeakTheme.colors.textPrimary
             )
 
-            Card(modifier = Modifier.fillMaxWidth()) {
+            PeakSectionCard {
                 Column(
-                    modifier = Modifier.padding(spacingLarge),
                     verticalArrangement = Arrangement.spacedBy(spacingMedium)
                 ) {
-                    Text(
-                        text = stringResource(R.string.settings_language),
-                        style = MaterialTheme.typography.titleMedium
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(spacingMedium)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Language,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                        Text(
+                            text = stringResource(R.string.settings_language),
+                            style = MaterialTheme.typography.sectionLabel,
+                            color = PeakTheme.colors.textPrimary
+                        )
+                    }
                     Text(
                         text = stringResource(R.string.settings_language_description),
-                        style = MaterialTheme.typography.bodyMedium
+                        style = MaterialTheme.typography.bodyMuted,
+                        color = PeakTheme.colors.textSecondary
                     )
 
                     options.forEach { option ->
-                        Row(
+                        Card(
                             modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            RadioButton(
-                                selected = uiState.languageTag == option.tag,
-                                onClick = { viewModel.onLanguageChanged(option.tag) }
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceVariant
                             )
-                            Text(text = option.label)
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(spacingMedium),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                RadioButton(
+                                    selected = uiState.languageTag == option.tag,
+                                    onClick = { viewModel.onLanguageChanged(option.tag) }
+                                )
+                                Text(
+                                    text = option.label,
+                                    style = MaterialTheme.typography.body,
+                                    color = PeakTheme.colors.textPrimary
+                                )
+                            }
                         }
                     }
                 }

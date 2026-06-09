@@ -27,13 +27,16 @@ fun RegisterScreen(
         title = stringResource(R.string.register_title),
         email = state.email,
         password = state.password,
+        confirmPassword = state.confirmPassword,
         primaryActionText = stringResource(R.string.register_primary_action),
         secondaryActionText = stringResource(R.string.register_secondary_action),
         onEmailChanged = viewModel::onEmailChanged,
         onPasswordChanged = viewModel::onPasswordChanged,
+        onConfirmPasswordChanged = viewModel::onConfirmPasswordChanged,
         onPrimaryAction = viewModel::register,
         onSecondaryAction = onNavigateToLogin,
         errorMessage = state.errorMessage,
-        enabled = !state.isLoading
+        enabled = !state.isLoading,
+        loading = state.isLoading
     )
 }

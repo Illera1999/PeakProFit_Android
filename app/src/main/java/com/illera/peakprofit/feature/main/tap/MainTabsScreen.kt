@@ -6,10 +6,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FitnessCenter
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.outlined.FitnessCenter
+import androidx.compose.material.icons.outlined.PersonOutline
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -19,10 +21,13 @@ import androidx.compose.ui.Modifier
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.res.stringResource
+import androidx.compose.foundation.layout.WindowInsets
 import com.illera.peakprofit.R
 import com.illera.peakprofit.core.ui.ConfirmDialog
+import com.illera.peakprofit.core.ui.components.PeakBottomNavigationBar
+import com.illera.peakprofit.core.ui.components.PeakBottomNavigationItem
 import com.illera.peakprofit.feature.main.exercises.ExercisesScreen
-import com.illera.peakprofit.feature.main.home.HomeScreen
+import com.illera.peakprofit.feature.main.profile.ProfileScreen
 
 @Composable
 fun MainTabsScreen(
@@ -38,8 +43,16 @@ fun MainTabsScreen(
     val coroutineScope = rememberCoroutineScope()
 
     val tabs = listOf(
-        TabItem(label = stringResource(R.string.tab_exercises)),
-        TabItem(label = stringResource(R.string.tab_profile))
+        PeakBottomNavigationItem(
+            label = stringResource(R.string.tab_exercises),
+            selectedIcon = Icons.Filled.FitnessCenter,
+            unselectedIcon = Icons.Outlined.FitnessCenter
+        ),
+        PeakBottomNavigationItem(
+            label = stringResource(R.string.tab_profile),
+            selectedIcon = Icons.Filled.Person,
+            unselectedIcon = Icons.Outlined.PersonOutline
+        )
     )
     val pagerState = rememberPagerState(initialPage = 0, pageCount = { tabs.size })
 
@@ -59,22 +72,18 @@ fun MainTabsScreen(
 
     Scaffold(
         modifier = modifier,
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
         bottomBar = {
-            NavigationBar {
-                tabs.forEachIndexed { index, tab ->
-                    NavigationBarItem(
-                        selected = pagerState.currentPage == index,
-                        onClick = {
-                            if (pagerState.currentPage == index) return@NavigationBarItem
-                            coroutineScope.launch {
-                                pagerState.animateScrollToPage(index)
-                            }
-                        },
-                        label = { Text(text = tab.label) },
-                        icon = {}
-                    )
+            PeakBottomNavigationBar(
+                items = tabs,
+                selectedIndex = pagerState.currentPage,
+                onSelect = { index ->
+                    if (pagerState.currentPage == index) return@PeakBottomNavigationBar
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(index)
+                    }
                 }
-            }
+            )
         }
     ) { paddingValues ->
         HorizontalPager(
@@ -85,7 +94,7 @@ fun MainTabsScreen(
         ) { page ->
             when (page) {
                 0 -> ExercisesScreen(onOpenExerciseDetail = onOpenExerciseDetail)
-                1 -> HomeScreen(
+                1 -> ProfileScreen(
                     onLoggedOut = onLoggedOut,
                     onNavigateToLogin = onNavigateToLogin,
                     onOpenSavedExercises = onOpenSavedExercises,
@@ -101,7 +110,3 @@ fun MainTabsScreen(
         }
     }
 }
-
-private data class TabItem(
-    val label: String
-)

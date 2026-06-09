@@ -1,9 +1,12 @@
 package com.illera.peakprofit.core.ui
 
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import com.illera.peakprofit.core.theme.body
+import com.illera.peakprofit.core.theme.screenTitle
+import com.illera.peakprofit.core.ui.components.PeakTextButton
 
 @Composable
 fun ConfirmDialog(
@@ -16,17 +19,23 @@ fun ConfirmDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(title) },
-        text = { Text(message) },
+        title = {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.screenTitle
+            )
+        },
+        text = {
+            Text(
+                text = message,
+                style = MaterialTheme.typography.body
+            )
+        },
         confirmButton = {
-            TextButton(onClick = onConfirm) {
-                Text(confirmText)
-            }
+            PeakTextButton(text = confirmText, onClick = onConfirm)
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(dismissText)
-            }
+            PeakTextButton(text = dismissText, onClick = onDismiss)
         }
     )
 }

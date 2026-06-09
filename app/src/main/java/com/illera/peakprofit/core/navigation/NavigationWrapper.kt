@@ -1,8 +1,11 @@
 package com.illera.peakprofit.core.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.listSaver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.material3.Text
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.ui.NavDisplay
@@ -16,7 +19,9 @@ import com.illera.peakprofit.feature.main.tap.MainTabsScreen
 
 @Composable
 fun NavigationWrapper() {
-    val backStack = remember { mutableStateListOf<Any>(SplashWrapper) }
+    val backStack = rememberSaveable(saver = NavigationBackStackSaver) {
+        mutableStateListOf<Any>(SplashWrapper)
+    }
 
     NavDisplay(
         backStack = backStack,
@@ -89,4 +94,41 @@ fun NavigationWrapper() {
 private fun <T> MutableList<T>.replaceWith(destination: T) {
     clear()
     add(destination)
+}
+
+private val NavigationBackStackSaver = listSaver<SnapshotStateList<Any>, String>(
+    save = { stack -> stack.map(::serializeNavigationKey) },
+    restore = { saved ->
+        mutableStateListOf<Any>().apply {
+            addAll(saved.map(::deserializeNavigationKey))
+        }
+    }
+)
+
+private fun serializeNavigationKey(key: Any): String {
+    return when (key) {
+        SplashWrapper -> "splash"
+        LoginWrapper -> "login"
+        RegisterWrapper -> "register"
+        MainTabsWrapper -> "main_tabs"
+        SavedExercisesWrapper -> "saved_exercises"
+        SettingsWrapper -> "settings"
+        is ExerciseDetailWrapper -> "exercise_detail:${key.exerciseId}"
+        else -> "splash"
+    }
+}
+
+private fun deserializeNavigationKey(value: String): Any {
+    return when {
+        value == "splash" -> SplashWrapper
+        value == "login" -> LoginWrapper
+        value == "register" -> RegisterWrapper
+        value == "main_tabs" -> MainTabsWrapper
+        value == "saved_exercises" -> SavedExercisesWrapper
+        value == "settings" -> SettingsWrapper
+        value.startsWith("exercise_detail:") -> {
+            ExerciseDetailWrapper(value.removePrefix("exercise_detail:"))
+        }
+        else -> SplashWrapper
+    }
 }
