@@ -1,5 +1,7 @@
 package com.illera.peakprofit.feature.main.home
 
+import com.illera.peakprofit.core.ui.UiText
+
 data class HomeUiState(
     val isAuthenticated: Boolean = false,
     val isGuest: Boolean = false,
@@ -11,5 +13,5 @@ data class HomeUiState(
     val isRecordingMotivationalAudio: Boolean = false,
     val isPlayingMotivationalAudio: Boolean = false,
     val recordingSecondsRemaining: Int = 60,
-    val audioStatusMessage: String = ""
+    val audioStatusMessage: UiText? = null
 )

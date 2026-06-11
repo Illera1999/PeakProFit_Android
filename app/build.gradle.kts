@@ -2,16 +2,22 @@ import java.util.Properties
 
 plugins {
     // Plugin Android principal del módulo app.
+    // Docs oficiales: https://developer.android.com/build
     alias(libs.plugins.android.application)
     // Compose compiler plugin (alineado con versión de Kotlin del catálogo).
+    // Docs oficiales: https://developer.android.com/jetpack/compose/compiler
     alias(libs.plugins.kotlin.compose)
     // Soporte de serialización Kotlin (rutas tipadas/navigation y payloads serializables).
+    // Docs oficiales: https://kotlinlang.org/docs/serialization.html
     alias(libs.plugins.kotlin.serialization)
     // Procesado de google-services.json (Firebase).
+    // Docs oficiales: https://developers.google.com/android/guides/google-services-plugin
     alias(libs.plugins.google.services)
     // Inyección de dependencias con Hilt.
+    // Docs oficiales: https://dagger.dev/hilt/
     alias(libs.plugins.hilt.android)
     // Procesado de anotaciones para Hilt (KSP).
+    // Docs oficiales: https://kotlinlang.org/docs/ksp-overview.html
     alias(libs.plugins.kotlin.ksp)
 }
 
@@ -175,29 +181,42 @@ androidComponents {
 
 dependencies {
     // Capa remota.
+    // Firebase Auth: https://firebase.google.com/docs/auth/android/start
     implementation(libs.firebase.auth)
+    // kotlinx-coroutines-play-services: https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-play-services/
     implementation(libs.kotlinx.coroutines.play.services)
+    // Retrofit: https://square.github.io/retrofit/
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.gson)
+    // OkHttp: https://square.github.io/okhttp/
     implementation(libs.okhttp.logging.interceptor)
 
     // Nav 3
+    // Docs oficiales: https://developer.android.com/guide/navigation/navigation-3
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.navigation3.ui)
 
     // DI.
+    // Hilt: https://dagger.dev/hilt/
     implementation(libs.hilt.android)
+    // Hilt + Jetpack: https://developer.android.com/training/dependency-injection/hilt-jetpack
     implementation(libs.androidx.hilt.lifecycle.viewmodel.compose)
     ksp(libs.hilt.compiler)
 
     // Android + Compose base.
+    // AndroidX Core / KTX: https://developer.android.com/jetpack/androidx/releases/core
     implementation(libs.androidx.core.ktx)
+    // AppCompat: https://developer.android.com/jetpack/androidx/releases/appcompat
     implementation(libs.androidx.appcompat)
+    // DataStore Preferences: https://developer.android.com/topic/libraries/architecture/datastore
     implementation(libs.androidx.datastore.preferences)
+    // Lifecycle: https://developer.android.com/jetpack/androidx/releases/lifecycle
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
+    // Activity Compose: https://developer.android.com/jetpack/androidx/releases/activity
     implementation(libs.androidx.activity.compose)
+    // Jetpack Compose: https://developer.android.com/jetpack/compose
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.graphics)
@@ -206,9 +225,13 @@ dependencies {
     implementation(libs.androidx.compose.material.icons.extended)
 
     // Test.
+    // JUnit 4: https://junit.org/junit4/
     testImplementation(libs.junit)
+    // AndroidX Test: https://developer.android.com/training/testing
     androidTestImplementation(libs.androidx.junit)
+    // Espresso: https://developer.android.com/training/testing/espresso
     androidTestImplementation(libs.androidx.espresso.core)
+    // Jetpack Compose Testing: https://developer.android.com/jetpack/compose/testing
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)

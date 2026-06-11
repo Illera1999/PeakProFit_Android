@@ -3,6 +3,7 @@
     <string name="common_back">Back</string>
     <string name="common_clear_text">Clear text</string>
     <string name="common_retry">Retry</string>
+    <string name="navigation_unknown_destination">Unknown destination</string>
     <string name="tab_exercises">Exercises</string>
     <string name="tab_profile">Profile</string>
     <string name="profile_guest_label">Guest mode</string>

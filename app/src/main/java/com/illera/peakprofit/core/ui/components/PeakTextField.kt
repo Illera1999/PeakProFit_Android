@@ -32,11 +32,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.unit.dp
 import com.illera.peakprofit.R
 import com.illera.peakprofit.core.theme.PeakTheme
 import com.illera.peakprofit.core.theme.body
@@ -62,6 +62,8 @@ fun PeakTextField(
     enabled: Boolean = true
 ) {
     val colors = PeakTheme.colors
+    val borderWidth = dimensionResource(R.dimen.peak_stroke_border)
+    val actionIconSize = dimensionResource(R.dimen.peak_size_icon_medium)
     var isPasswordVisible by remember(isPassword) { mutableStateOf(false) }
     val togglePasswordDescription = if (isPasswordVisible) {
         stringResource(R.string.auth_hide_password)
@@ -89,7 +91,7 @@ fun PeakTextField(
                 .defaultMinSize(minHeight = PeakTheme.sizes.fieldMinHeight),
             shape = PeakTheme.shapes.field,
             color = if (enabled) colors.inputBackground else colors.disabledContainer,
-            border = BorderStroke(1.dp, borderColor),
+            border = BorderStroke(borderWidth, borderColor),
             shadowElevation = PeakTheme.elevations.field
         ) {
             Row(
@@ -134,7 +136,7 @@ fun PeakTextField(
                         IconButton(
                             onClick = { isPasswordVisible = !isPasswordVisible },
                             enabled = enabled,
-                            modifier = Modifier.size(24.dp)
+                            modifier = Modifier.size(actionIconSize)
                         ) {
                             Icon(
                                 imageVector = if (isPasswordVisible) {
@@ -151,7 +153,7 @@ fun PeakTextField(
                         IconButton(
                             onClick = trailingAction.onClick,
                             enabled = enabled,
-                            modifier = Modifier.size(24.dp)
+                            modifier = Modifier.size(actionIconSize)
                         ) {
                             Icon(
                                 imageVector = trailingAction.icon,

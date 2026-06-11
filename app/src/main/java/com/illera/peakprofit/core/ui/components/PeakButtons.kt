@@ -10,7 +10,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.dimensionResource
+import com.illera.peakprofit.R
 import com.illera.peakprofit.core.theme.PeakTheme
 import com.illera.peakprofit.core.theme.body
 import com.illera.peakprofit.core.theme.button
@@ -29,6 +30,9 @@ fun PeakPrimaryButton(
     enabled: Boolean = true,
     loading: Boolean = false
 ) {
+    val progressSize = dimensionResource(R.dimen.peak_size_progress_indicator)
+    val progressStroke = dimensionResource(R.dimen.peak_stroke_progress)
+
     Button(
         onClick = onClick,
         modifier = modifier.defaultMinSize(minHeight = PeakTheme.sizes.buttonMinHeight),
@@ -43,8 +47,8 @@ fun PeakPrimaryButton(
     ) {
         if (loading) {
             CircularProgressIndicator(
-                modifier = Modifier.size(18.dp),
-                strokeWidth = 2.dp,
+                modifier = Modifier.size(progressSize),
+                strokeWidth = progressStroke,
                 color = MaterialTheme.colorScheme.onPrimary
             )
         } else {

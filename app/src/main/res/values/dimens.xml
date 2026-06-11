@@ -4,4 +4,26 @@
     <dimen name="spacing_medium">12dp</dimen>
     <dimen name="spacing_large">16dp</dimen>
     <dimen name="spacing_xlarge">20dp</dimen>
+    <dimen name="peak_spacing_xx_small">4dp</dimen>
+    <dimen name="peak_spacing_x_small">8dp</dimen>
+    <dimen name="peak_spacing_small">12dp</dimen>
+    <dimen name="peak_spacing_medium">16dp</dimen>
+    <dimen name="peak_spacing_large">24dp</dimen>
+    <dimen name="peak_spacing_x_large">32dp</dimen>
+    <dimen name="peak_spacing_xx_large">48dp</dimen>
+    <dimen name="peak_shape_material_small">16dp</dimen>
+    <dimen name="peak_shape_material_medium">20dp</dimen>
+    <dimen name="peak_shape_material_large">28dp</dimen>
+    <dimen name="peak_shape_field">18dp</dimen>
+    <dimen name="peak_shape_button">16dp</dimen>
+    <dimen name="peak_shape_card">24dp</dimen>
+    <dimen name="peak_elevation_none">0dp</dimen>
+    <dimen name="peak_elevation_card">2dp</dimen>
+    <dimen name="peak_elevation_field">6dp</dimen>
+    <dimen name="peak_size_field_min_height">52dp</dimen>
+    <dimen name="peak_size_button_min_height">54dp</dimen>
+    <dimen name="peak_stroke_border">1dp</dimen>
+    <dimen name="peak_size_icon_medium">24dp</dimen>
+    <dimen name="peak_size_progress_indicator">18dp</dimen>
+    <dimen name="peak_stroke_progress">2dp</dimen>
 </resources>

@@ -3,6 +3,7 @@
     <string name="common_back">Volver</string>
     <string name="common_clear_text">Borrar texto</string>
     <string name="common_retry">Reintentar</string>
+    <string name="navigation_unknown_destination">Destino desconocido</string>
     <string name="tab_exercises">Ejercicios</string>
     <string name="tab_profile">Perfil</string>
     <string name="profile_guest_label">Modo invitado</string>

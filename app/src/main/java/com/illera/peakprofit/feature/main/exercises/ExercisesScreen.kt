@@ -24,6 +24,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -66,7 +67,11 @@ fun ExercisesScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = spacing.large, vertical = spacing.large),
+                .padding(
+                    top = spacing.large,
+                    start = spacing.large,
+                    end =  spacing.large,
+                ),
             verticalArrangement = Arrangement.spacedBy(spacing.medium)
         ) {
             PeakSearchBar(
@@ -76,110 +81,120 @@ fun ExercisesScreen(
                 enabled = !state.isLoading && !state.isLoadingMore
             )
 
-            when {
-                state.isLoading -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator()
+            Box(
+                modifier = Modifier.weight(1f),
+                contentAlignment = Alignment.TopCenter
+            ) {
+                when {
+                    state.isLoading -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
                     }
-                }
-                state.errorMessage != null -> {
-                    PeakSectionCard {
+                    state.errorMessage != null -> {
+                        PeakSectionCard {
+                            Column(
+                                verticalArrangement = Arrangement.spacedBy(spacing.small)
+                            ) {
+                                Text(
+                                    text = state.errorMessage?.asString().orEmpty(),
+                                    style = MaterialTheme.typography.body,
+                                    color = PeakTheme.colors.danger
+                                )
+                                PeakTextButton(
+                                    text = stringResource(R.string.common_retry),
+                                    onClick = viewModel::retry
+                                )
+                            }
+                        }
+                    }
+                    state.filteredItems.isEmpty() -> {
+                        PeakSectionCard {
+                            Text(
+                                text = if (state.query.isBlank()) {
+                                    stringResource(R.string.exercises_empty_state)
+                                } else {
+                                    stringResource(R.string.exercises_empty_results)
+                                },
+                                style = MaterialTheme.typography.body,
+                                color = PeakTheme.colors.textSecondary,
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
+                    else -> {
                         Column(
-                            verticalArrangement = Arrangement.spacedBy(spacing.small)
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.spacedBy(spacing.medium)
                         ) {
                             Text(
-                                text = state.errorMessage?.asString().orEmpty(),
+                                text = stringResource(R.string.exercises_results, state.filteredItems.size),
                                 style = MaterialTheme.typography.body,
-                                color = PeakTheme.colors.danger
-                            )
-                            PeakTextButton(
-                                text = stringResource(R.string.common_retry),
-                                onClick = viewModel::retry
-                            )
-                        }
-                    }
-                }
-                state.filteredItems.isEmpty() -> {
-                    PeakSectionCard {
-                        Text(
-                            text = if (state.query.isBlank()) {
-                                stringResource(R.string.exercises_empty_state)
-                            } else {
-                                stringResource(R.string.exercises_empty_results)
-                            },
-                            style = MaterialTheme.typography.body,
-                            color = PeakTheme.colors.textSecondary,
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                }
-                else -> {
-                    Text(
-                        text = stringResource(R.string.exercises_results, state.filteredItems.size),
-                        style = MaterialTheme.typography.body,
-                        color = PeakTheme.colors.textSecondary
-                    )
-
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.spacedBy(spacing.medium),
-                        contentPadding = PaddingValues(bottom = spacing.xxLarge)
-                    ) {
-                        itemsIndexed(
-                            items = state.filteredItems,
-                            key = { index, exercise -> "${exercise.id}-$index" }
-                        ) { index, exercise ->
-                            ExerciseCard(
-                                exercise = exercise,
-                                canSave = state.canSaveExercises,
-                                isSaved = state.savedExerciseIds.contains(exercise.id),
-                                onOpenDetail = onOpenExerciseDetail,
-                                onSaveClick = viewModel::onSaveClicked
+                                color = PeakTheme.colors.textSecondary
                             )
 
-                            if (index >= state.filteredItems.lastIndex - 2 && state.query.isBlank()) {
-                                LaunchedEffect(
-                                    index,
-                                    state.isLoadingMore,
-                                    state.hasMore,
-                                    state.query
-                                ) {
-                                    if (!state.isLoadingMore && state.hasMore) {
-                                        viewModel.loadMore()
-                                    }
-                                }
-                            }
-                        }
-
-                        if (state.isLoadingMore) {
-                            item(key = "loading_more") {
-                                PeakSectionCard {
-                                    Column(
-                                        horizontalAlignment = Alignment.CenterHorizontally,
-                                        verticalArrangement = Arrangement.spacedBy(spacing.small)
-                                    ) {
-                                        CircularProgressIndicator()
-                                        Text(
-                                            text = stringResource(R.string.exercises_loading_more),
-                                            style = MaterialTheme.typography.body,
-                                            color = PeakTheme.colors.textSecondary
-                                        )
-                                    }
-                                }
-                            }
-                        }
-
-                        if (!state.hasMore && state.items.isNotEmpty() && state.query.isBlank()) {
-                            item(key = "end_of_list") {
-                                PeakSectionCard {
-                                    Text(
-                                        text = stringResource(R.string.exercises_end_of_list),
-                                        style = MaterialTheme.typography.body,
-                                        color = PeakTheme.colors.textSecondary
+                            LazyColumn(
+                                modifier = Modifier.weight(1f),
+                                verticalArrangement = Arrangement.spacedBy(spacing.medium),
+                                contentPadding = PaddingValues(bottom = spacing.xxLarge)
+                            ) {
+                                itemsIndexed(
+                                    items = state.filteredItems,
+                                    key = { index, exercise -> "${exercise.id}-$index" }
+                                ) { index, exercise ->
+                                    ExerciseCard(
+                                        exercise = exercise,
+                                        canSave = state.canSaveExercises,
+                                        isSaved = state.savedExerciseIds.contains(exercise.id),
+                                        onOpenDetail = onOpenExerciseDetail,
+                                        onSaveClick = viewModel::onSaveClicked
                                     )
+
+                                    if (index >= state.filteredItems.lastIndex - 2 && state.query.isBlank()) {
+                                        LaunchedEffect(
+                                            index,
+                                            state.isLoadingMore,
+                                            state.hasMore,
+                                            state.query
+                                        ) {
+                                            if (!state.isLoadingMore && state.hasMore) {
+                                                viewModel.loadMore()
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (state.isLoadingMore) {
+                                    item(key = "loading_more") {
+                                        PeakSectionCard {
+                                            Column(
+                                                horizontalAlignment = Alignment.CenterHorizontally,
+                                                verticalArrangement = Arrangement.spacedBy(spacing.small)
+                                            ) {
+                                                CircularProgressIndicator()
+                                                Text(
+                                                    text = stringResource(R.string.exercises_loading_more),
+                                                    style = MaterialTheme.typography.body,
+                                                    color = PeakTheme.colors.textSecondary
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (!state.hasMore && state.items.isNotEmpty() && state.query.isBlank()) {
+                                    item(key = "end_of_list") {
+                                        PeakSectionCard {
+                                            Text(
+                                                text = stringResource(R.string.exercises_end_of_list),
+                                                style = MaterialTheme.typography.body,
+                                                color = PeakTheme.colors.textSecondary
+                                            )
+                                        }
+                                    }
                                 }
                             }
                         }

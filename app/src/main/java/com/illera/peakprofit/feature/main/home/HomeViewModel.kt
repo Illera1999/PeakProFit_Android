@@ -5,6 +5,7 @@ import android.media.MediaRecorder
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.illera.peakprofit.R
+import com.illera.peakprofit.core.ui.UiText
 import com.illera.peakprofit.domain.entity.AuthState
 import com.illera.peakprofit.domain.repository.AuthRepository
 import com.illera.peakprofit.domain.repository.MotivationalAudioRepository
@@ -66,7 +67,7 @@ class HomeViewModel @Inject constructor(
                             isRecordingMotivationalAudio = false,
                             isPlayingMotivationalAudio = false,
                             recordingSecondsRemaining = MAX_RECORDING_SECONDS,
-                            audioStatusMessage = ""
+                            audioStatusMessage = null
                         )
                     }
                     else -> {
@@ -82,7 +83,7 @@ class HomeViewModel @Inject constructor(
                             isRecordingMotivationalAudio = false,
                             isPlayingMotivationalAudio = false,
                             recordingSecondsRemaining = MAX_RECORDING_SECONDS,
-                            audioStatusMessage = ""
+                            audioStatusMessage = null
                         )
                     }
                 }
@@ -97,7 +98,7 @@ class HomeViewModel @Inject constructor(
     fun onRecordPermissionDenied() {
         if (!_uiState.value.isAuthenticated) return
         _uiState.value = _uiState.value.copy(
-            audioStatusMessage = "Necesitas permitir el micrófono para grabar tu mensaje."
+            audioStatusMessage = UiText.StringResource(R.string.profile_audio_permission_required)
         )
     }
 
@@ -132,13 +133,13 @@ class HomeViewModel @Inject constructor(
                 isRecordingMotivationalAudio = true,
                 isPlayingMotivationalAudio = false,
                 recordingSecondsRemaining = MAX_RECORDING_SECONDS,
-                audioStatusMessage = "Grabando mensaje motivacional..."
+                audioStatusMessage = UiText.StringResource(R.string.profile_audio_recording)
             )
             startCountdown()
         }.onFailure {
             motivationalAudioRepository.discardTempAudio(ownerKey)
             _uiState.value = _uiState.value.copy(
-                audioStatusMessage = "No se pudo iniciar la grabación."
+                audioStatusMessage = UiText.StringResource(R.string.profile_audio_recording_error)
             )
         }
     }
@@ -164,7 +165,7 @@ class HomeViewModel @Inject constructor(
                 isRecordingMotivationalAudio = false,
                 hasMotivationalAudio = motivationalAudioRepository.hasAudio(ownerKey),
                 recordingSecondsRemaining = MAX_RECORDING_SECONDS,
-                audioStatusMessage = "Mensaje motivacional guardado."
+                audioStatusMessage = UiText.StringResource(R.string.profile_audio_saved)
             )
         } else {
             motivationalAudioRepository.discardTempAudio(ownerKey)
@@ -172,9 +173,9 @@ class HomeViewModel @Inject constructor(
                 isRecordingMotivationalAudio = false,
                 recordingSecondsRemaining = MAX_RECORDING_SECONDS,
                 audioStatusMessage = if (saveRecording) {
-                    "No se pudo guardar la grabación."
+                    UiText.StringResource(R.string.profile_audio_recording_error)
                 } else {
-                    ""
+                    null
                 }
             )
             refreshAudioState()
@@ -206,12 +207,12 @@ class HomeViewModel @Inject constructor(
             mediaPlayer = player
             _uiState.value = _uiState.value.copy(
                 isPlayingMotivationalAudio = true,
-                audioStatusMessage = "Reproduciendo tu mensaje motivacional."
+                audioStatusMessage = UiText.StringResource(R.string.profile_audio_playing)
             )
         }.onFailure {
             _uiState.value = _uiState.value.copy(
                 isPlayingMotivationalAudio = false,
-                audioStatusMessage = "No se pudo reproducir el audio."
+                audioStatusMessage = UiText.StringResource(R.string.profile_audio_playback_error)
             )
         }
     }
@@ -228,7 +229,7 @@ class HomeViewModel @Inject constructor(
             hasMotivationalAudio = false,
             isPlayingMotivationalAudio = false,
             recordingSecondsRemaining = MAX_RECORDING_SECONDS,
-            audioStatusMessage = "Mensaje motivacional eliminado."
+            audioStatusMessage = UiText.StringResource(R.string.profile_audio_deleted)
         )
     }
 
@@ -240,9 +241,9 @@ class HomeViewModel @Inject constructor(
             isRecordingMotivationalAudio = false,
             recordingSecondsRemaining = MAX_RECORDING_SECONDS,
             audioStatusMessage = if (motivationalAudioRepository.hasAudio(ownerKey)) {
-                "Ya tienes un mensaje motivacional guardado."
+                UiText.StringResource(R.string.profile_audio_ready_saved)
             } else {
-                "Graba un mensaje de hasta 1 minuto."
+                UiText.StringResource(R.string.profile_audio_ready_empty)
             }
         )
     }
@@ -271,9 +272,9 @@ class HomeViewModel @Inject constructor(
             _uiState.value = _uiState.value.copy(
                 isPlayingMotivationalAudio = false,
                 audioStatusMessage = if (_uiState.value.hasMotivationalAudio) {
-                    "Tu mensaje está listo para reproducirse o regrabarse."
+                    UiText.StringResource(R.string.profile_audio_ready_saved)
                 } else {
-                    ""
+                    null
                 }
             )
         }

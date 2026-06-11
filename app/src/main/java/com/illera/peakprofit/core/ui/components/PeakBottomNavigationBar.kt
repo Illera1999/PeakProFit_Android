@@ -1,16 +1,21 @@
 package com.illera.peakprofit.core.ui.components
 
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.dimensionResource
+import com.illera.peakprofit.R
 import com.illera.peakprofit.core.theme.PeakTheme
 import com.illera.peakprofit.core.theme.bodyMuted
 
@@ -27,17 +32,25 @@ fun PeakBottomNavigationBar(
     selectedIndex: Int,
     onSelect: (Int) -> Unit
 ) {
-    NavigationBar(
-        modifier = androidx.compose.ui.Modifier.navigationBarsPadding(),
-        containerColor = MaterialTheme.colorScheme.surface,
+    val noElevation = dimensionResource(R.dimen.peak_elevation_none)
+
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        color = MaterialTheme.colorScheme.surface,
         tonalElevation = PeakTheme.elevations.card
     ) {
-        items.forEachIndexed { index, item ->
-            PeakBottomNavigationBarItem(
-                item = item,
-                selected = selectedIndex == index,
-                onClick = { onSelect(index) }
-            )
+        NavigationBar(
+            modifier = Modifier.navigationBarsPadding(),
+            containerColor = MaterialTheme.colorScheme.surface,
+            tonalElevation = noElevation
+        ) {
+            items.forEachIndexed { index, item ->
+                PeakBottomNavigationBarItem(
+                    item = item,
+                    selected = selectedIndex == index,
+                    onClick = { onSelect(index) }
+                )
+            }
         }
     }
 }

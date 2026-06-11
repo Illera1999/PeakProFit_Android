@@ -21,8 +21,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.illera.peakprofit.R
 import com.illera.peakprofit.core.theme.PeakTheme
 import com.illera.peakprofit.core.theme.body
@@ -35,13 +35,16 @@ fun PeakSearchBar(
     modifier: Modifier = Modifier,
     enabled: Boolean = true
 ) {
+    val borderWidth = dimensionResource(R.dimen.peak_stroke_border)
+    val actionIconSize = dimensionResource(R.dimen.peak_size_icon_medium)
+
     Surface(
         modifier = modifier
             .fillMaxWidth()
             .defaultMinSize(minHeight = PeakTheme.sizes.fieldMinHeight),
         shape = PeakTheme.shapes.field,
         color = if (enabled) PeakTheme.colors.inputBackground else PeakTheme.colors.disabledContainer,
-        border = BorderStroke(1.dp, PeakTheme.colors.inputBorder),
+        border = BorderStroke(borderWidth, PeakTheme.colors.inputBorder),
         shadowElevation = PeakTheme.elevations.field
     ) {
         Row(
@@ -80,7 +83,7 @@ fun PeakSearchBar(
             if (value.isNotBlank()) {
                 IconButton(
                     onClick = { onValueChange("") },
-                    modifier = Modifier.size(24.dp),
+                    modifier = Modifier.size(actionIconSize),
                     enabled = enabled
                 ) {
                     Icon(

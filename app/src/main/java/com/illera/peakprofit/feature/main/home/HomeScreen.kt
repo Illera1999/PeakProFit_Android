@@ -26,6 +26,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.illera.peakprofit.R
 import com.illera.peakprofit.core.ui.ConfirmDialog
+import com.illera.peakprofit.core.ui.asString
 
 @Composable
 fun HomeScreen(
@@ -89,7 +90,9 @@ fun HomeScreen(
                     verticalArrangement = Arrangement.spacedBy(spacingMedium)
                 ) {
                     Text(text = stringResource(R.string.home_motivational_audio_title))
-                    Text(text = state.audioStatusMessage)
+                    state.audioStatusMessage?.let { status ->
+                        Text(text = status.asString())
+                    }
                     if (state.isRecordingMotivationalAudio) {
                         Text(
                             text = stringResource(

@@ -1,10 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
+    <color name="peak_accent_light">#FF51E05E</color>
+    <color name="peak_accent_dark">#FF44C650</color>
+    <color name="peak_link_light">#FF4E82FF</color>
+    <color name="peak_link_dark">#FF8FB0FF</color>
+    <color name="peak_text_primary_light">#FF161616</color>
+    <color name="peak_text_primary_dark">#FFF5F7FB</color>
+    <color name="peak_text_secondary_light">#FF68738D</color>
+    <color name="peak_text_secondary_dark">#FFABB7D3</color>
+    <color name="peak_divider_light">#FFD8DECF</color>
+    <color name="peak_divider_dark">#FF252B38</color>
+    <color name="peak_input_background_light">#FFF8F8F4</color>
+    <color name="peak_input_background_dark">#FF171C25</color>
+    <color name="peak_input_border_light">#FFD4DBCC</color>
+    <color name="peak_input_border_dark">#FF333C4E</color>
+    <color name="peak_canvas_light">#FFF1F4EC</color>
+    <color name="peak_canvas_dark">#FF0E1218</color>
+    <color name="peak_error_light">#FFC33B3B</color>
+    <color name="peak_error_dark">#FFFF8A80</color>
+    <color name="peak_disabled_container_light">#FFE5EADF</color>
+    <color name="peak_disabled_container_dark">#FF273141</color>
+    <color name="peak_disabled_content_light">#FF95A1B8</color>
+    <color name="peak_disabled_content_dark">#FF61708C</color>
+    <color name="peak_field_shadow_light">#12243B53</color>
+    <color name="peak_field_shadow_dark">#40000000</color>
+    <color name="peak_background_light">#FFF7F8F2</color>
+    <color name="peak_background_dark">#FF080B10</color>
+    <color name="peak_surface_light">#FFFBFBF7</color>
+    <color name="peak_surface_dark">#FF11161D</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 </resources>

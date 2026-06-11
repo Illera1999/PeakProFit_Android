@@ -7,8 +7,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.material3.Text
+import androidx.compose.ui.res.stringResource
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.ui.NavDisplay
+import com.illera.peakprofit.R
 import com.illera.peakprofit.feature.auth.login.LoginScreen
 import com.illera.peakprofit.feature.auth.register.RegisterScreen
 import com.illera.peakprofit.feature.auth.splash.SplashScreen
@@ -84,7 +86,7 @@ fun NavigationWrapper() {
                 }
 
                 else -> NavEntry(key) {
-                    Text("Unknown destination")
+                    Text(stringResource(R.string.navigation_unknown_destination))
                 }
             }
         }

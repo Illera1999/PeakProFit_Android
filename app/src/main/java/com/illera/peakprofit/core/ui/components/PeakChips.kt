@@ -10,7 +10,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.dimensionResource
+import com.illera.peakprofit.R
 import com.illera.peakprofit.core.theme.PeakTheme
 import com.illera.peakprofit.core.theme.bodyMuted
 
@@ -21,6 +22,8 @@ fun PeakFilterChip(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val borderWidth = dimensionResource(R.dimen.peak_stroke_border)
+
     Surface(
         modifier = modifier,
         onClick = onClick,
@@ -32,7 +35,7 @@ fun PeakFilterChip(
         },
         contentColor = if (selected) MaterialTheme.colorScheme.primary else PeakTheme.colors.textSecondary,
         border = BorderStroke(
-            width = 1.dp,
+            width = borderWidth,
             color = if (selected) MaterialTheme.colorScheme.primary.copy(alpha = 0.35f) else PeakTheme.colors.inputBorder
         )
     ) {
