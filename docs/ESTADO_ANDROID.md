@@ -9,12 +9,12 @@ El proyecto Android tiene una base funcional con autenticacion Firebase, navegac
 ## 2. Estado funcional actual
 
 - `MainActivity` inicia tema y host de navegacion.
-- Flujo auth operativo: `Splash -> Login -> Register -> Home`.
-- Grafo principal operativo: `Exercises`, `Home`, `SavedExercises`, `Settings`, `ExerciseDetail`.
+- Flujo auth operativo: `Splash -> Login -> Register -> MainTabs`.
+- Grafo principal operativo: `Exercises`, `Profile`, `SavedExercises`, `Settings`, `ExerciseDetail`.
 - Login y registro separados por pantalla y ViewModel con formulario reutilizable (`AuthForm`).
-- Estado de sesion modelado con `AuthState` (`Loading`, `Authenticated`, `Unauthenticated`, `Error`).
+- Estado de sesion modelado con `AuthState` (`Loading`, `Authenticated`, `Unauthenticated`, `Guest`, `Error`).
 - Manejo de credenciales con validacion minima y mapeo de errores Firebase a mensajes localizables mediante `UiText`.
-- `Home` actua como entrada a acciones de cuenta: logout, acceso a guardados y ajustes.
+- `Profile` actua como entrada a acciones de cuenta: logout, acceso a guardados, audio motivacional y ajustes.
 - `MainTabsScreen` incluye dialogo de confirmacion al salir (`ConfirmDialog`).
 - Integracion ExerciseDB via RapidAPI operativa para listado, busqueda por nombre, detalle e imagen de ejercicios.
 - La pestaña `Exercises` alterna entre listado paginado y busqueda remota por nombre segun el contenido del buscador.
@@ -32,8 +32,8 @@ Ruta base: `app/src/main/java/com/illera/peakprofit`
 - `data/di`, `data/dto`, `data/remote`, `data/repository`
 - `domain/entity`, `domain/repository`, `domain/usecase`
 - `feature/auth/*`
-- `feature/main/exercises`, `feature/main/exercise_detail`, `feature/main/home`, `feature/main/saved_exercises`, `feature/main/tap`
-- `feature/settings`
+- `feature/main/exercises`, `feature/main/exercise_detail`, `feature/main/profile`, `feature/main/saved_exercises`, `feature/main/tap`
+- `feature/main/home/settings`
 
 ## 3.1. Casuisticas cubiertas en Exercises
 

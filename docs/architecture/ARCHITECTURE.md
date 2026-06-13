@@ -1,110 +1,150 @@
-# Arquitectura Base
+# Arquitectura Aplicada
 
 ## Objetivo
 
-Mantener una estructura clara para crecer por features sin mezclar responsabilidades.
+La arquitectura de PeakProFit busca separar responsabilidades para que el proyecto sea facil de explicar, mantener y ampliar. La idea principal es que la UI no conozca detalles de red, Firebase, DataStore ni almacenamiento de ficheros.
 
-## Capas
+## Capas principales
 
-- `feature/*`
-Responsable de UI y estado de presentacion por pantalla.
+## `feature`
 
-- `domain/*`
-Responsable de reglas de negocio, entidades y contratos de repositorio.
+Contiene pantallas, estados de UI y ViewModels.
 
-- `data/*`
-Responsable de implementaciones concretas (API, Firebase, mapeos, etc.).
+Responsabilidades:
 
-- `core/*`
-Responsable de elementos transversales: navegacion, tema, componentes UI comunes y utilidades de texto localizable.
+- Renderizar la interfaz con Compose.
+- Exponer acciones de usuario al ViewModel.
+- Observar `StateFlow` con `collectAsStateWithLifecycle`.
+- Mostrar estados de carga, error, vacio y contenido.
 
-## Convencion por feature
+Ejemplos:
 
-Cada feature puede crecer con este patron minimo:
+- `feature/auth/login`
+- `feature/main/exercises`
+- `feature/main/exercise_detail`
+- `feature/main/saved_exercises`
+- `feature/main/profile`
 
-- `XScreen.kt`
-- `XUiState.kt`
-- `XViewModel.kt`
+## `domain`
 
-Cuando la feature crezca:
+Contiene el modelo de negocio independiente de Android UI.
 
-- `components/` para piezas UI reutilizables dentro de la feature.
-- `model/` si necesita modelos de presentacion especificos.
-- `feature/auth/components/AuthForm.kt` es la referencia actual de extraccion de UI comun entre pantallas hermanas.
+Responsabilidades:
 
-## Regla de dependencias
+- Entidades de dominio.
+- Contratos de repositorio.
+- Casos de uso.
+- Reglas que no deben depender de Retrofit, Firebase ni Compose.
 
-- `feature` puede depender de `domain` y `core`.
-- `domain` no depende de `feature` ni de `data`.
-- `data` implementa contratos definidos en `domain`.
+Ejemplos:
+
+- `Exercise`
+- `AuthState`
+- `ExerciseRepository`
+- `SavedExerciseRepository`
+- `GetExercisesUseCase`
+- `SearchExercisesByNameUseCase`
+
+## `data`
+
+Contiene implementaciones concretas de acceso a datos.
+
+Responsabilidades:
+
+- Llamadas remotas con Retrofit.
+- Integracion con Firebase Auth.
+- Persistencia con DataStore.
+- Acceso a ficheros locales.
+- Mapeo entre DTOs remotos y entidades de dominio.
+
+Ejemplos:
+
+- `ExerciseDbRepository`
+- `FirebaseAuthRepository`
+- `StorageSavedExerciseRepository`
+- `LocalMotivationalAudioRepository`
+
+## `core`
+
+Contiene elementos transversales reutilizables.
+
+Responsabilidades:
+
+- Navegacion.
+- Tema visual.
+- Componentes UI comunes.
+- Utilidades como `UiText` y `Logger`.
+
+Ejemplos:
+
+- `NavigationWrapper`
+- `PeakProFitTheme`
+- `ConfirmDialog`
+- `PeakSearchBar`
+- `ScreenTopBar`
+
+## Flujo de dependencia
+
+La direccion esperada es:
+
+```text
+feature -> domain
+feature -> core
+data -> domain
+app/di -> data + domain
+```
+
+`domain` queda en el centro y no depende de Android UI ni de implementaciones externas.
+
+## Patron por pantalla
+
+Las pantallas principales siguen este esquema:
+
+```text
+FeatureScreen.kt
+FeatureViewModel.kt
+FeatureUiState.kt
+```
+
+El objetivo es que:
+
+- `Screen` se encargue de pintar.
+- `ViewModel` se encargue de orquestar casos de uso.
+- `UiState` represente el estado completo que necesita la pantalla.
 
 ## Inyeccion de dependencias
 
-- Se usa Hilt como mecanismo unico de DI.
-- `Application` usa `@HiltAndroidApp`.
-- `MainActivity` usa `@AndroidEntryPoint`.
-- Los `ViewModel` usan `@HiltViewModel` con constructor injection.
-- Los modulos de provision estan en `data/di/*` (`AuthModule`, `ExerciseModule`).
-- `AndroidManifest.xml` declara `android:name=".PeakProFitApp"` en `<application>`.
-- `ExerciseModule` tambien registra `DataStore<Preferences>` para persistir ejercicios guardados por usuario.
+Se usa Hilt:
 
-## Casos de uso activos
+- `PeakProFitApp` esta anotada con `@HiltAndroidApp`.
+- `MainActivity` esta anotada con `@AndroidEntryPoint`.
+- Los ViewModels usan `@HiltViewModel`.
+- Los modulos `AuthModule` y `ExerciseModule` proveen repositorios, Retrofit, OkHttp, Gson y DataStore.
 
-- Auth:
-- `SignInUseCase`
-- `RegisterUseCase`
-- `ObserveSessionUseCase`
+## Ventajas de esta arquitectura
 
-- Exercises:
-- `GetExercisesUseCase`
-- `SearchExercisesByNameUseCase`
-- `GetExerciseByIdUseCase`
-- `GetExerciseImageByIdUseCase`
-- `ObserveSavedExercisesUseCase`
-- `GetSavedExerciseByIdUseCase`
-- `IsExerciseSavedUseCase`
-- `SaveExerciseUseCase`
-- `RemoveSavedExerciseUseCase`
+- Permite cambiar una implementacion de `data` sin tocar la UI.
+- Los casos de uso hacen mas clara la intencion de cada operacion.
+- El estado de pantalla queda centralizado.
+- Es mas facil explicar el proyecto por bloques.
+- Facilita pruebas futuras de ViewModels y casos de uso.
 
-## Paginacion de ejercicios
+## Ejemplo aplicado: buscar ejercicios
 
-- La carga de ejercicios se hace por paginas mediante `limit` y `offset`.
-- El contrato de dominio para ejercicios expone `getExercises(limit, offset)`.
-- La pestaña `Exercises` opera en dos modos: listado paginado con `query` vacia y busqueda remota por nombre con `query` informada.
-- El estado de pantalla separa carga inicial (`isLoading`) de carga incremental (`isLoadingMore`).
-- La búsqueda por nombre usa `SearchExercisesByNameUseCase` y debounce en `ExercisesViewModel`.
-- La descripcion completa del flujo esta en [EXERCISES_PAGINATION.md](./EXERCISES_PAGINATION.md).
+1. `ExercisesScreen` envia texto al ViewModel.
+2. `ExercisesViewModel` aplica debounce.
+3. `SearchExercisesByNameUseCase` ejecuta la accion de dominio.
+4. `ExerciseRepository` define el contrato.
+5. `ExerciseDbRepository` llama a Retrofit.
+6. `ExerciseDto` se mapea a `Exercise`.
+7. El ViewModel actualiza `ExercisesUiState`.
+8. Compose redibuja la lista visible.
 
-## Detalle de ejercicios
+## Ejemplo aplicado: guardar ejercicios
 
-- El detalle usa endpoint dedicado por id (`GET /exercises/exercise/{id}`).
-- La imagen del ejercicio usa endpoint dedicado con query params (`GET /image?exerciseId={id}&resolution=360`).
-- No se usa la variante `GET /image/{id}` porque no coincide con la implementacion validada en iOS ni con el comportamiento real observado en RapidAPI.
-- La navegacion al detalle es una ruta tipada (`ExerciseDetailNav`) en el `MainGraph`.
-- La carga de detalle se gestiona en `ExerciseDetailViewModel`.
-- El repositorio de ejercicios mantiene cache en memoria por `id` para evitar llamadas repetidas durante la sesion.
-- La imagen del detalle se guarda en `cacheDir/exercise-images/` con extension `.gif` para reproducirla desde un archivo local.
-- `PeakProFitApp` registra un `ImageLoader` global de Coil con `ImageDecoderDecoder`/`GifDecoder` para soportar GIFs animados.
-- El flujo replica el patron usado en iOS: descargar bytes, persistirlos en cache y abrir el recurso desde una ruta local.
-- Si la API no devuelve imagen para un ejercicio concreto, el detalle sigue siendo valido y la UI no debe tratarlo como error bloqueante.
-
-## Persistencia local de guardados
-
-- Los ejercicios guardados viven en `StorageSavedExerciseRepository`.
-- El repositorio persiste un mapa `userId -> List<Exercise>` serializado con Gson dentro de `DataStore`.
-- Las escrituras se protegen con `Mutex` para evitar sobreescrituras cuando hay operaciones concurrentes.
-- `SharedPreferencesMigration` permite mover datos previos al nuevo almacenamiento sin perder favoritos.
-
-## Localizacion y mensajes UI
-
-- Los `ViewModel` emiten errores y textos mediante `UiText` para no depender de `stringResource`.
-- Los recursos viven en `values/strings.xml` y `values-en/strings.xml`.
-- El idioma activo se cambia con `AppCompatDelegate.setApplicationLocales(...)` desde `SettingsViewModel`.
-- `MainActivity` usa `AppCompatActivity` para soportar la recreacion automática asociada a ese cambio de locale.
-- El detalle del flujo esta en [LOCALIZATION.md](./LOCALIZATION.md).
-
-## Notas de modelado
-
-- La sesion se modela con `AuthState` en dominio para evitar ambiguedad de `null`.
-- `Exercise` es entidad de dominio desacoplada del DTO remoto.
-- El modo invitado se modela en sesion (`AuthState.Guest`) y se consume desde `ObserveSessionUseCase`.
+1. El usuario pulsa guardar en una card.
+2. El ViewModel comprueba sesion y estado actual.
+3. Se ejecuta `SaveExerciseUseCase` o `RemoveSavedExerciseUseCase`.
+4. `StorageSavedExerciseRepository` actualiza DataStore.
+5. `ObserveSavedExercisesUseCase` emite la lista actualizada.
+6. La UI refleja el nuevo estado.

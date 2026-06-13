@@ -1,101 +1,227 @@
-# Librerias y Plugins - Registro y Motivos
+# Librerias Escogidas
 
-Este archivo registra plugins y librerias usados en el proyecto Android, el motivo de adopcion y el beneficio practico.
+Este documento explica que librerias y plugins usa PeakProFit y por que encajan en el proyecto.
 
-## Build y lenguaje
+## Plugins de build
 
-- `com.android.application` (AGP)
-Motivo: plugin oficial para construir la aplicacion Android.
-Beneficio: empaquetado, variantes y tareas de build estandar.
+## Android Gradle Plugin
 
-- `org.jetbrains.kotlin.android`
-Motivo: soporte Kotlin para modulo Android.
-Beneficio: Kotlin como lenguaje principal.
+Identificador:
 
-- `org.jetbrains.kotlin.plugin.compose`
-Motivo: soporte del compilador para Jetpack Compose.
-Beneficio: habilita composables y optimizaciones.
+```text
+com.android.application
+```
 
-- `org.jetbrains.kotlin.plugin.serialization`
-Motivo: rutas tipadas serializables en navegacion.
-Beneficio: navegacion mas segura en compilacion.
+Motivo: construir, empaquetar y firmar la aplicacion Android.
 
-- `com.google.devtools.ksp`
-Motivo: procesamiento de codigo para Hilt.
-Beneficio: generacion eficiente de codigo DI.
+## Kotlin Android
 
-- `com.google.dagger.hilt.android`
-Motivo: habilitar plugin de Hilt.
-Beneficio: DI escalable en toda la app.
+Identificador:
+
+```text
+org.jetbrains.kotlin.android
+```
+
+Motivo: usar Kotlin como lenguaje principal.
+
+## Kotlin Compose
+
+Identificador:
+
+```text
+org.jetbrains.kotlin.plugin.compose
+```
+
+Motivo: integrar el compilador de Compose con Kotlin.
+
+## Kotlin Serialization
+
+Identificador:
+
+```text
+org.jetbrains.kotlin.plugin.serialization
+```
+
+Motivo: soporte de serializacion Kotlin usado por piezas modernas del stack.
+
+## Google Services
+
+Identificador:
+
+```text
+com.google.gms.google-services
+```
+
+Motivo: procesar `google-services.json` y conectar Firebase.
+
+## Hilt
+
+Identificador:
+
+```text
+com.google.dagger.hilt.android
+```
+
+Motivo: habilitar inyeccion de dependencias con Hilt.
+
+## KSP
+
+Identificador:
+
+```text
+com.google.devtools.ksp
+```
+
+Motivo: procesar anotaciones de Hilt de forma eficiente.
 
 ## UI
+
+## Jetpack Compose
+
+Dependencias principales:
 
 - `androidx.compose:compose-bom`
 - `androidx.compose.ui:ui`
 - `androidx.compose.ui:ui-graphics`
-- `androidx.compose.ui:ui-tooling-preview`
 - `androidx.compose.material3:material3`
 - `androidx.activity:activity-compose`
-- `androidx.appcompat:appcompat`
 
-Motivo: stack base Compose + Material3, mas soporte AppCompat para locales por aplicacion.
-Beneficio: UI declarativa consistente y productiva, con cambio de idioma en caliente soportado por `AppCompatDelegate`.
+Motivo: construir UI declarativa, modular y reactiva.
 
-## Arquitectura y estado
+Beneficio: las pantallas se describen como funciones de estado, encajando con ViewModel y StateFlow.
+
+## Material Icons Extended
+
+Dependencia:
+
+```text
+androidx.compose.material:material-icons-extended
+```
+
+Motivo: iconos para acciones comunes como perfil, fitness, busqueda, guardado y ajustes.
+
+## AppCompat
+
+Dependencia:
+
+```text
+androidx.appcompat:appcompat
+```
+
+Motivo: soportar cambio de idioma por aplicacion con `AppCompatDelegate`.
+
+## Arquitectura y ciclo de vida
+
+## Lifecycle
+
+Dependencias:
 
 - `androidx.lifecycle:lifecycle-runtime-ktx`
 - `androidx.lifecycle:lifecycle-runtime-compose`
 - `androidx.lifecycle:lifecycle-viewmodel-compose`
 
-Motivo: ciclo de vida + integracion ViewModel en Compose.
-Beneficio: estado lifecycle-aware (`collectAsStateWithLifecycle`).
+Motivo: ViewModel, ciclo de vida y observacion segura desde Compose.
+
+Beneficio: `collectAsStateWithLifecycle` evita observar flujos cuando la UI no esta activa.
+
+## Hilt
+
+Dependencias:
 
 - `com.google.dagger:hilt-android`
 - `com.google.dagger:hilt-compiler`
-- `androidx.hilt:hilt-navigation-compose`
+- `androidx.hilt:hilt-lifecycle-viewmodel-compose`
 
-Motivo: DI y obtencion de ViewModels por destino.
-Beneficio: desacople y wiring limpio.
+Motivo: inyectar repositorios, clientes y ViewModels sin construir dependencias manualmente en pantallas.
 
 ## Navegacion
 
-- `androidx.navigation:navigation-compose`
+Dependencias:
 
-Motivo: definir grafo y rutas en Compose.
-Beneficio: navegacion centralizada con grafos anidados (`AuthGraph`, `MainGraph`).
+- `androidx.navigation3:navigation3-runtime`
+- `androidx.navigation3:navigation3-ui`
 
-## Autenticacion y sesion
+Motivo: usar Navigation 3 con `NavDisplay` y back stack controlado desde Compose.
 
-- `com.google.firebase:firebase-auth`
+Beneficio: navegacion declarativa, pila serializable y control claro de destinos.
 
-Motivo: login/registro y estado de sesion.
-Beneficio: backend auth gestionado y estable.
+## Red
 
-- `org.jetbrains.kotlinx:kotlinx-coroutines-play-services`
+## Retrofit
 
-Motivo: adaptar `Task` a corrutinas (`await()`).
-Beneficio: implementaciones sin callbacks anidados.
-
-## Red (ExerciseDB)
+Dependencias:
 
 - `com.squareup.retrofit2:retrofit`
 - `com.squareup.retrofit2:converter-gson`
-- `com.squareup.okhttp3:logging-interceptor`
 
-Motivo: integracion con ExerciseDB V1 (`oss.exercisedb.dev`).
-Beneficio: cliente HTTP tipado, parseo JSON y trazabilidad de requests.
+Motivo: definir endpoints HTTP como interfaz Kotlin.
 
-## Base Android
+Beneficio: llamadas tipadas y parseo automatico a DTOs.
 
-- `androidx.core:core-ktx`
-Motivo: extensiones Kotlin para APIs Android.
-Beneficio: codigo mas expresivo.
+## OkHttp Logging Interceptor
 
-- `androidx.datastore:datastore-preferences`
-Motivo: persistir favoritos por usuario con una API reactiva y segura para corrutinas.
-Beneficio: reemplaza un almacenamiento basado en preferencias manuales y simplifica observacion de cambios.
+Dependencia:
+
+```text
+com.squareup.okhttp3:logging-interceptor
+```
+
+Motivo: registrar requests y responses en desarrollo.
+
+Beneficio: facilita depurar ExerciseDB y confirmar endpoints.
+
+## Firebase
+
+## Firebase Auth
+
+Dependencia:
+
+```text
+com.google.firebase:firebase-auth
+```
+
+Motivo: autenticacion con email y contrasena sin backend propio.
+
+## Coroutines Play Services
+
+Dependencia:
+
+```text
+org.jetbrains.kotlinx:kotlinx-coroutines-play-services
+```
+
+Motivo: convertir `Task` de Firebase a corrutinas con `await()`.
+
+## Persistencia
+
+## DataStore Preferences
+
+Dependencia:
+
+```text
+androidx.datastore:datastore-preferences
+```
+
+Motivo: persistir ejercicios guardados con API reactiva basada en Flow.
+
+Beneficio: mejor integracion con corrutinas que SharedPreferences.
+
+## Imagenes
+
+## Coil Compose
+
+Dependencias:
+
+- `io.coil-kt:coil-compose`
+- `io.coil-kt:coil-gif`
+
+Motivo: cargar imagenes desde archivos locales en Compose y registrar soporte para GIFs.
+
+Beneficio: el detalle de ejercicio puede renderizar imagenes descargadas desde ExerciseDB.
 
 ## Testing
+
+Dependencias:
 
 - `junit:junit`
 - `androidx.test.ext:junit`
@@ -104,18 +230,13 @@ Beneficio: reemplaza un almacenamiento basado en preferencias manuales y simplif
 - `androidx.compose.ui:ui-test-manifest`
 - `androidx.compose.ui:ui-tooling`
 
-Motivo: stack base de pruebas JVM/instrumentadas/Compose.
-Beneficio: cobertura de logica y UI.
-
-## Estado actual de DI
-
-- Patron activo: Hilt.
-- Modulos activos: `AuthModule`, `ExerciseModule`.
+Motivo: cubrir pruebas JVM, instrumentadas y UI Compose.
 
 ## Regla de actualizacion
 
-Cada vez que se añada o elimine una libreria:
+Cuando se anada, cambie o elimine una dependencia:
 
 1. Actualizar `gradle/libs.versions.toml`.
 2. Actualizar `app/build.gradle.kts`.
-3. Registrar el cambio y motivo en este documento.
+3. Actualizar este documento.
+4. Verificar build.

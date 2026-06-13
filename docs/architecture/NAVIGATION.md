@@ -1,51 +1,75 @@
 # Navegacion
 
-## Enfoque actual
+## Enfoque
 
-Se usa `navigation-compose` con rutas tipadas y `NavHost` dedicado en `core/navigation/PeakProFitNavHost.kt`.
+La navegacion se implementa con Navigation 3 usando `NavDisplay` y una pila propia de destinos. El archivo principal es `core/navigation/NavigationWrapper.kt`.
 
-La navegacion esta separada en dos grafos:
+La app no define rutas como strings sueltos para cada pantalla. En su lugar usa objetos wrapper y un back stack guardado con `rememberSaveable`.
 
-- `AuthGraph`: flujo de autenticacion.
-- `MainGraph`: flujo principal autenticado.
+## Destinos principales
 
-## Destinos tipados actuales
+- `SplashWrapper`
+- `LoginWrapper`
+- `RegisterWrapper`
+- `MainTabsWrapper`
+- `SavedExercisesWrapper`
+- `SettingsWrapper`
+- `ExerciseDetailWrapper(exerciseId)`
 
-Definidos en `Screens.kt`:
+## Back stack
 
-- `AuthGraph`
-- `MainGraph`
-- `MainTabsNav`
-- `SplashNav`
-- `LoginNav`
-- `RegisterNav`
-- `HomeNav`
-- `ExercisesNav`
-- `SavedExercisesNav`
-- `SettingsNav`
-- `ExerciseDetailNav`
+El back stack se guarda como `SnapshotStateList<Any>`:
 
-## Flujo activo
+```kotlin
+val backStack = rememberSaveable(saver = NavigationBackStackSaver) {
+    mutableStateListOf<Any>(SplashWrapper)
+}
+```
 
-1. App arranca en `AuthGraph` con `SplashNav`.
-2. `SplashNav` decide:
-- `Authenticated` -> `MainTabsNav` limpiando `AuthGraph`.
-- `Unauthenticated/Error` -> `LoginNav`.
-3. Desde `LoginNav` se puede navegar a `RegisterNav`.
-4. Login/registro correctos navegan a `MainTabsNav` limpiando `AuthGraph`.
-5. Login permite acceso como invitado cambiando el estado de sesion a `AuthState.Guest`.
-6. `MainTabsNav` contiene navegacion interna por tabs (`Exercises` y `Home`) con `HorizontalPager` + `NavigationBar`.
-7. La UI se adapta leyendo `AuthState`:
-- En `Home`, `Guest` muestra accion para volver al login.
-- En `Exercises`, el icono de guardar solo se muestra en `Authenticated`.
-8. Desde `Home`, un usuario autenticado puede abrir `SavedExercisesNav` y cualquier usuario puede abrir `SettingsNav`.
-9. Desde `Exercises` o `SavedExercises`, al pulsar un item, se hace push a `ExerciseDetailNav(exerciseId)` dentro de `MainGraph`.
-10. `SavedExercisesNav`, `SettingsNav` y `ExerciseDetailNav` se renderizan por encima de las tabs; al volver (`popBackStack`) reaparece la barra inferior.
-11. Logout desde `Home` navega a `LoginNav` limpiando `MainGraph`.
+Para sobrevivir a recreaciones, cada destino se serializa a `String` y se restaura con `NavigationBackStackSaver`.
 
-## Criterios para nuevas rutas
+## Flujo de arranque
 
-1. Crear destino tipado en `Screens.kt`.
-2. Añadir `composable<Destino>()` en `PeakProFitNavHost` dentro del grafo correcto.
-3. Si cambia de flujo (auth <-> main), limpiar el grafo origen con `popUpTo<Grafo>() { inclusive = true }`.
-4. Mantener la logica de navegacion fuera de componentes UI puros.
+1. La app inicia en `SplashWrapper`.
+2. `SplashScreen` observa la sesion.
+3. Si hay usuario autenticado, navega a `MainTabsWrapper`.
+4. Si no hay usuario, navega a `LoginWrapper`.
+
+## Flujo de autenticacion
+
+- `LoginWrapper` permite ir a `RegisterWrapper`.
+- `RegisterWrapper` permite volver a login.
+- Login correcto, registro correcto o modo invitado sustituyen la pila por `MainTabsWrapper`.
+
+## Flujo principal
+
+`MainTabsWrapper` contiene `MainTabsScreen`.
+
+La pantalla principal usa:
+
+- `HorizontalPager` para alternar entre tabs.
+- `PeakBottomNavigationBar` como barra inferior.
+- Tab `Exercises`.
+- Tab `Profile`.
+
+## Pantallas fuera de tabs
+
+Desde el flujo principal se pueden abrir:
+
+- `ExerciseDetailWrapper(exerciseId)`.
+- `SavedExercisesWrapper`.
+- `SettingsWrapper`.
+
+Estas pantallas se apilan por encima de las tabs y vuelven con `removeLastOrNull()`.
+
+## Back del sistema
+
+En `MainTabsScreen`, el boton atras abre `ConfirmDialog` para confirmar salida de la app. Se declara despues del pager para dar prioridad a ese manejador.
+
+## Criterios para nuevas pantallas
+
+1. Crear un nuevo wrapper de navegacion.
+2. Anadirlo al `entryProvider` de `NavigationWrapper`.
+3. Anadir serializacion y deserializacion si debe sobrevivir a recreaciones.
+4. Pasar callbacks de navegacion desde la pantalla padre.
+5. Evitar que componentes UI puros conozcan la pila de navegacion.
