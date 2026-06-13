@@ -77,8 +77,14 @@ object ExerciseModule {
 
     @Provides
     @Singleton
-    fun provideExerciseRepository(api: ExerciseDbApi): ExerciseRepository {
-        return ExerciseDbRepository(api)
+    fun provideExerciseRepository(
+        api: ExerciseDbApi,
+        @ApplicationContext context: Context
+    ): ExerciseRepository {
+        return ExerciseDbRepository(
+            api = api,
+            cacheRoot = context.cacheDir
+        )
     }
 
     @Provides

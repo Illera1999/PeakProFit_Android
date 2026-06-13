@@ -53,6 +53,7 @@ okhttpLogging = "5.3.2"
 appcompat = "1.7.1"
 # DataStore Preferences: https://developer.android.com/topic/libraries/architecture/datastore
 datastorePreferences = "1.2.1"
+coil = "2.7.0"
 
 [libraries]
 # Dependencias del runtime y tests del módulo app.
@@ -98,6 +99,8 @@ okhttp-logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-i
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 # DataStore Preferences: https://developer.android.com/topic/libraries/architecture/datastore
 androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastorePreferences" }
+coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
+coil-gif = { group = "io.coil-kt", name = "coil-gif", version.ref = "coil" }
 
 # Navigation 3: https://developer.android.com/guide/navigation/navigation-3
 androidx-navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "nav3Core"}

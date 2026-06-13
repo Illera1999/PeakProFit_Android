@@ -11,10 +11,11 @@ import retrofit2.HttpException
 import java.net.URL
 
 class ExerciseDbRepository(
-    private val api: ExerciseDbApi
+    private val api: ExerciseDbApi,
+    private val cacheRoot: java.io.File
 ) : ExerciseRepository {
     private val exerciseCache = mutableMapOf<String, Exercise>()
-    private val imageCache = mutableMapOf<String, ByteArray>()
+    private val imageCache = mutableMapOf<String, java.io.File>()
     private val imageResolution = 360
 
     override suspend fun getExercises(limit: Int, offset: Int): List<Exercise> {
@@ -27,6 +28,18 @@ class ExerciseDbRepository(
             sortMethod = "bodyPart",
             sortOrder = "ascending"
         )
+        return response.mapNotNull { dto ->
+            dto.toDomainOrNull()?.also { exercise ->
+                exerciseCache[exercise.id] = mergeExercise(exerciseCache[exercise.id], exercise)
+            }
+        }
+    }
+
+    override suspend fun searchExercisesByName(name: String): List<Exercise> {
+        if (BuildConfig.RAPID_API_KEY.isBlank()) {
+            throw IllegalStateException("RAPID_API_KEY no configurada")
+        }
+        val response = api.searchExercisesByName(name.trim())
         return response.mapNotNull { dto ->
             dto.toDomainOrNull()?.also { exercise ->
                 exerciseCache[exercise.id] = mergeExercise(exerciseCache[exercise.id], exercise)
@@ -47,7 +60,7 @@ class ExerciseDbRepository(
         return merged
     }
 
-    override suspend fun getExerciseImageById(id: String): ByteArray? {
+    override suspend fun getExerciseImageById(id: String): java.io.File? {
         imageCache[id]?.let { return it }
         if (BuildConfig.RAPID_API_KEY.isBlank()) {
             throw IllegalStateException("RAPID_API_KEY no configurada")
@@ -69,8 +82,24 @@ class ExerciseDbRepository(
         if (imageBytes.isEmpty()) {
             return null
         }
-        imageCache[id] = imageBytes
-        return imageBytes
+        // Reproducir el GIF desde un archivo local replica el patrón validado en iOS
+        // y evita perder la animación al trabajar solo con bytes en memoria.
+        val imageFile = withContext(Dispatchers.IO) {
+            saveImageToCache(id = id, imageBytes = imageBytes)
+        }
+        imageCache[id] = imageFile
+        return imageFile
+    }
+
+    private fun saveImageToCache(id: String, imageBytes: ByteArray): java.io.File {
+        val imagesDir = java.io.File(cacheRoot, "exercise-images")
+        if (!imagesDir.exists()) {
+            imagesDir.mkdirs()
+        }
+        // Mantenemos extensión .gif para que Coil pueda inferir correctamente el decoder.
+        val imageFile = java.io.File(imagesDir, "${id.trim()}-$imageResolution.gif")
+        imageFile.writeBytes(imageBytes)
+        return imageFile
     }
 
     private fun hasDetailData(exercise: Exercise): Boolean {

@@ -70,7 +70,7 @@
     <string name="register_primary_action">Create account</string>
     <string name="register_secondary_action">Already have an account? Sign in</string>
     <string name="exercises_title">Exercises</string>
-    <string name="exercises_search_label">Search by name, muscle or equipment</string>
+    <string name="exercises_search_label">Search by name</string>
     <string name="exercises_results">Results: %1$d</string>
     <string name="exercises_empty_state">There are no exercises available yet.</string>
     <string name="exercises_empty_results">No exercises match the current filters.</string>
@@ -79,6 +79,7 @@
     <string name="exercises_error_save">Could not update the saved exercise. Try again.</string>
     <string name="exercises_error_load_more">Could not load more exercises. Try again.</string>
     <string name="exercises_error_load">Could not load exercises. Try again.</string>
+    <string name="exercises_error_search">Could not search exercises by name. Try again.</string>
     <string name="saved_exercises_title">Saved exercises</string>
     <string name="saved_exercises_sign_in_required">You need to sign in to view saved exercises.</string>
     <string name="saved_exercises_empty">There are no saved exercises yet.</string>

@@ -6,16 +6,17 @@ import com.illera.peakprofit.R
 import com.illera.peakprofit.core.Logger
 import com.illera.peakprofit.core.ui.UiText
 import com.illera.peakprofit.domain.entity.AuthState
-import com.illera.peakprofit.domain.entity.Exercise
 import com.illera.peakprofit.domain.usecase.auth.ObserveSessionUseCase
 import com.illera.peakprofit.domain.usecase.exercise.GetExerciseByIdUseCase
 import com.illera.peakprofit.domain.usecase.exercise.GetExercisesUseCase
 import com.illera.peakprofit.domain.usecase.exercise.ObserveSavedExercisesUseCase
 import com.illera.peakprofit.domain.usecase.exercise.RemoveSavedExerciseUseCase
 import com.illera.peakprofit.domain.usecase.exercise.SaveExerciseUseCase
+import com.illera.peakprofit.domain.usecase.exercise.SearchExercisesByNameUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,6 +26,7 @@ import kotlinx.coroutines.launch
 class ExercisesViewModel @Inject constructor(
     private val getExercisesUseCase: GetExercisesUseCase,
     private val getExerciseByIdUseCase: GetExerciseByIdUseCase,
+    private val searchExercisesByNameUseCase: SearchExercisesByNameUseCase,
     private val saveExerciseUseCase: SaveExerciseUseCase,
     private val removeSavedExerciseUseCase: RemoveSavedExerciseUseCase,
     private val observeSavedExercisesUseCase: ObserveSavedExercisesUseCase,
@@ -46,6 +48,8 @@ class ExercisesViewModel @Inject constructor(
     private var currentOffset = 0
     private var currentUserId: String? = null
     private var savedExercisesJob: Job? = null
+    private var searchJob: Job? = null
+    private var lastCompletedSearchQuery: String? = null
 
     init {
         observeAuthState()
@@ -67,13 +71,6 @@ class ExercisesViewModel @Inject constructor(
                         _uiState.value = _uiState.value.copy(
                             canSaveExercises = false,
                             savedExerciseIds = emptySet()
-                        )
-                        val current = _uiState.value
-                        _uiState.value = current.copy(
-                            filteredItems = filterItems(
-                                items = current.items,
-                                query = current.query
-                            )
                         )
                     }
                 }
@@ -103,20 +100,39 @@ class ExercisesViewModel @Inject constructor(
 
     fun onQueryChanged(query: String) {
         val current = _uiState.value
-        val filtered = filterItems(
-            items = current.items,
-            query = query
-        )
+        val normalizedQuery = query.trim()
 
         _uiState.value = current.copy(
             query = query,
-            filteredItems = filtered
+            isSearching = normalizedQuery.isNotBlank(),
+            errorMessage = null,
+            searchResults = if (normalizedQuery.isBlank()) current.searchResults else current.searchResults
         )
+
+        if (normalizedQuery.isBlank()) {
+            searchJob?.cancel()
+            lastCompletedSearchQuery = null
+            _uiState.value = _uiState.value.copy(
+                isSearching = false,
+                searchResults = emptyList(),
+                errorMessage = null
+            )
+            return
+        }
+
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            // Debounce para no lanzar una request por cada tecla mientras el usuario escribe.
+            delay(350)
+            performSearch(normalizedQuery)
+        }
     }
 
     fun retry() {
         val current = _uiState.value
-        if (current.items.isEmpty()) {
+        if (current.isSearchMode) {
+            performSearch(current.query.trim())
+        } else if (current.items.isEmpty()) {
             loadInitialExercises()
         } else {
             loadMore()
@@ -141,10 +157,6 @@ class ExercisesViewModel @Inject constructor(
                         isLoadingMore = false,
                         hasMore = hasMore,
                         items = merged,
-                        filteredItems = filterItems(
-                            items = merged,
-                            query = _uiState.value.query
-                        ),
                         errorMessage = null
                     )
                 }
@@ -175,10 +187,6 @@ class ExercisesViewModel @Inject constructor(
                         isLoadingMore = false,
                         hasMore = items.size == PAGE_SIZE,
                         items = items,
-                        filteredItems = filterItems(
-                            items = items,
-                            query = _uiState.value.query
-                        ),
                         errorMessage = null
                     )
                 }
@@ -193,13 +201,35 @@ class ExercisesViewModel @Inject constructor(
         }
     }
 
-    private fun filterItems(items: List<Exercise>, query: String): List<Exercise> {
-        val normalizedQuery = query.trim()
-        return items.filter { exercise ->
-            normalizedQuery.isBlank() || exercise.name.contains(normalizedQuery, ignoreCase = true) ||
-                exercise.bodyParts.any { it.contains(normalizedQuery, ignoreCase = true) } ||
-                exercise.targetMuscles.any { it.contains(normalizedQuery, ignoreCase = true) } ||
-                exercise.equipments.any { it.contains(normalizedQuery, ignoreCase = true) }
+    private fun performSearch(query: String) {
+        if (query.isBlank()) return
+        if (lastCompletedSearchQuery == query && _uiState.value.searchResults.isNotEmpty()) return
+
+        viewModelScope.launch {
+            // La pestaña alterna entre listado paginado y búsqueda remota por nombre.
+            _uiState.value = _uiState.value.copy(
+                isSearching = true,
+                errorMessage = null
+            )
+            runCatching { searchExercisesByNameUseCase(query) }
+                .onSuccess { items ->
+                    if (_uiState.value.query.trim() != query) return@onSuccess
+                    lastCompletedSearchQuery = query
+                    _uiState.value = _uiState.value.copy(
+                        isSearching = false,
+                        searchResults = items,
+                        errorMessage = null
+                    )
+                }
+                .onFailure {
+                    if (_uiState.value.query.trim() != query) return@onFailure
+                    Logger.e(TAG, "Error buscando ejercicios por nombre: $query", it)
+                    _uiState.value = _uiState.value.copy(
+                        isSearching = false,
+                        searchResults = emptyList(),
+                        errorMessage = UiText.StringResource(R.string.exercises_error_search)
+                    )
+                }
         }
     }
 
@@ -209,11 +239,7 @@ class ExercisesViewModel @Inject constructor(
             observeSavedExercisesUseCase(userId).collect { savedExercises ->
                 val savedIds = savedExercises.mapTo(mutableSetOf()) { it.id }
                 _uiState.value = _uiState.value.copy(
-                    savedExerciseIds = savedIds,
-                    filteredItems = filterItems(
-                        items = _uiState.value.items,
-                        query = _uiState.value.query
-                    )
+                    savedExerciseIds = savedIds
                 )
             }
         }

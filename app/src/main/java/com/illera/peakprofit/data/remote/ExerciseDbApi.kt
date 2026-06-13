@@ -20,6 +20,11 @@ interface ExerciseDbApi {
         @Path("id") id: String
     ): ExerciseDto
 
+    @GET("exercises/name/{name}")
+    suspend fun searchExercisesByName(
+        @Path("name") name: String
+    ): List<ExerciseDto>
+
     @GET("image")
     suspend fun getExerciseImage(
         @Query("exerciseId") exerciseId: String,

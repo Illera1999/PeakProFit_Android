@@ -1,10 +1,10 @@
 # PeakProFit Android - Estado del Proyecto
 
-Fecha de actualizacion: 2026-06-06
+Fecha de actualizacion: 2026-06-13
 
 ## 1. Resumen ejecutivo
 
-El proyecto Android tiene una base funcional con autenticacion Firebase, navegacion tipada con grafos anidados, DI con Hilt, integracion de ExerciseDB (listado, detalle e imagen), guardado persistente de ejercicios por usuario y cambio de idioma en tiempo de ejecucion.
+El proyecto Android tiene una base funcional con autenticacion Firebase, navegacion tipada con grafos anidados, DI con Hilt, integracion de ExerciseDB (listado, detalle, búsqueda por nombre e imagen), guardado persistente de ejercicios por usuario y cambio de idioma en tiempo de ejecucion.
 
 ## 2. Estado funcional actual
 
@@ -16,8 +16,9 @@ El proyecto Android tiene una base funcional con autenticacion Firebase, navegac
 - Manejo de credenciales con validacion minima y mapeo de errores Firebase a mensajes localizables mediante `UiText`.
 - `Home` actua como entrada a acciones de cuenta: logout, acceso a guardados y ajustes.
 - `MainTabsScreen` incluye dialogo de confirmacion al salir (`ConfirmDialog`).
-- Integracion ExerciseDB via RapidAPI operativa para listado, detalle e imagen de ejercicios.
-- La pantalla de detalle intenta cargar imagen con `GET /image?exerciseId={id}&resolution=360` y mantiene cache en memoria durante la ejecucion.
+- Integracion ExerciseDB via RapidAPI operativa para listado, busqueda por nombre, detalle e imagen de ejercicios.
+- La pestaña `Exercises` alterna entre listado paginado y busqueda remota por nombre segun el contenido del buscador.
+- La pantalla de detalle carga imagen con `GET /image?exerciseId={id}&resolution=360`, la guarda como `.gif` en cache local y la renderiza con Coil.
 - La ausencia de imagen en algunos ejercicios no bloquea la carga del detalle.
 - Los ejercicios guardados se persisten en `DataStore<Preferences>` agrupados por `userId`.
 - La app soporta español e ingles y permite cambiar el idioma desde `Settings` sin reiniciar manualmente.
@@ -34,17 +35,26 @@ Ruta base: `app/src/main/java/com/illera/peakprofit`
 - `feature/main/exercises`, `feature/main/exercise_detail`, `feature/main/home`, `feature/main/saved_exercises`, `feature/main/tap`
 - `feature/settings`
 
+## 3.1. Casuisticas cubiertas en Exercises
+
+- `query` vacia: listado inicial paginado con `loadMore`.
+- `query` con texto: busqueda remota por nombre sin paginacion.
+- `retry()` reintenta el flujo correcto segun el modo activo.
+- Limpiar el buscador vuelve al listado ya cargado en memoria.
+- La pantalla distingue entre `isLoading`, `isLoadingMore`, `isSearching`, error de listado, error de busqueda y estado vacio.
+
 ## 4. Calidad y build
 
-- Build verificado: `:app:compileDebugKotlin` en verde.
+- Build verificado: `:app:assembleDevelopDebug` en verde.
 - Tests JVM verificados: `:app:testDebugUnitTest` en verde.
 - Tests instrumentados relevantes disponibles: `LocaleChangeInstrumentedTest`.
 
 ## 5. Deuda tecnica pendiente
 
 - No hay tests unitarios de `LoginViewModel`, `RegisterViewModel`, `ExercisesViewModel`, `SettingsViewModel`.
-- No hay cache local persistente para catalogo de ejercicios ni imagenes (Room/disco). Solo existe persistencia de favoritos y cache en memoria del detalle.
+- No hay cache local persistente para catalogo de ejercicios. Las imagenes del detalle se escriben en `cacheDir`, pero sin una politica propia de limpieza o indexado persistente.
 - El selector de idioma solo soporta `es` y `en`; si crece el catalogo de idiomas hara falta abstraer la lista de opciones.
+- La reproduccion GIF del detalle esta alineada con el flujo de iOS, pero sigue requiriendo validacion manual en dispositivo/emulador.
 
 ## 6. Siguiente iteracion recomendada
 

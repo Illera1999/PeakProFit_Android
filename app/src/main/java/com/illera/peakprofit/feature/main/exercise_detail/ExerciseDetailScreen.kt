@@ -1,6 +1,5 @@
 package com.illera.peakprofit.feature.main.exercise_detail
 
-import android.graphics.BitmapFactory
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,7 +25,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -139,12 +137,6 @@ fun ExerciseDetailScreen(
                     }
                 }
                 exercise != null -> {
-                    val imageBitmap = remember(state.imageData) {
-                        state.imageData?.let { imageBytes ->
-                            BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)?.asImageBitmap()
-                        }
-                    }
-
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.spacedBy(spacing.medium),
@@ -153,7 +145,7 @@ fun ExerciseDetailScreen(
                         item {
                             PeakDetailHero(
                                 title = exercise.name,
-                                imageBitmap = imageBitmap
+                                imageFile = state.imageFile
                             )
                         }
                         item {

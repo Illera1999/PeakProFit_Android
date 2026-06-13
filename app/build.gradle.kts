@@ -210,6 +210,9 @@ dependencies {
     implementation(libs.androidx.appcompat)
     // DataStore Preferences: https://developer.android.com/topic/libraries/architecture/datastore
     implementation(libs.androidx.datastore.preferences)
+    // Coil Compose + GIF decoder.
+    implementation(libs.coil.compose)
+    implementation(libs.coil.gif)
     // Lifecycle: https://developer.android.com/jetpack/androidx/releases/lifecycle
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.runtime.compose)

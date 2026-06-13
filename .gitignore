@@ -57,3 +57,16 @@ local.properties
 # Firebase local config
 google-services.json
 google-services-*.json
+GoogleService-Info.plist
+GoogleService-Info-*.plist
+
+# Cloud / Firebase service accounts and exported credentials
+*firebase-adminsdk*.json
+service-account*.json
+serviceAccount*.json
+credentials.json
+
+# Common signing / auth credentials that should stay local
+authkey_*.p8
+AuthKey_*.p8
+.secrets/

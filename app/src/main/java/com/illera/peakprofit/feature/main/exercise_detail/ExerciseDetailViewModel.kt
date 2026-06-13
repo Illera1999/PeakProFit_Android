@@ -55,7 +55,7 @@ class ExerciseDetailViewModel @Inject constructor(
             _uiState.value = _uiState.value.copy(
                 isLoading = true,
                 exercise = null,
-                imageData = null,
+                imageFile = null,
                 errorMessage = null
             )
             supervisorScope {
@@ -64,7 +64,7 @@ class ExerciseDetailViewModel @Inject constructor(
 
                 runCatching { exerciseDeferred.await() }
                     .onSuccess { exercise ->
-                        val imageData = runCatching { imageDeferred.await() }
+                        val imageFile = runCatching { imageDeferred.await() }
                             .onFailure {
                                 Logger.w(
                                     TAG,
@@ -77,7 +77,7 @@ class ExerciseDetailViewModel @Inject constructor(
                         _uiState.value = ExerciseDetailUiState(
                             isLoading = false,
                             exercise = exercise,
-                            imageData = imageData,
+                            imageFile = imageFile,
                             canSaveExercise = _uiState.value.canSaveExercise,
                             isExerciseSaved = _uiState.value.isExerciseSaved,
                             errorMessage = null

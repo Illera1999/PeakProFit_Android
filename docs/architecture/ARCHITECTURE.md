@@ -57,6 +57,7 @@ Cuando la feature crezca:
 
 - Exercises:
 - `GetExercisesUseCase`
+- `SearchExercisesByNameUseCase`
 - `GetExerciseByIdUseCase`
 - `GetExerciseImageByIdUseCase`
 - `ObserveSavedExercisesUseCase`
@@ -69,7 +70,9 @@ Cuando la feature crezca:
 
 - La carga de ejercicios se hace por paginas mediante `limit` y `offset`.
 - El contrato de dominio para ejercicios expone `getExercises(limit, offset)`.
+- La pestaña `Exercises` opera en dos modos: listado paginado con `query` vacia y busqueda remota por nombre con `query` informada.
 - El estado de pantalla separa carga inicial (`isLoading`) de carga incremental (`isLoadingMore`).
+- La búsqueda por nombre usa `SearchExercisesByNameUseCase` y debounce en `ExercisesViewModel`.
 - La descripcion completa del flujo esta en [EXERCISES_PAGINATION.md](./EXERCISES_PAGINATION.md).
 
 ## Detalle de ejercicios
@@ -80,7 +83,9 @@ Cuando la feature crezca:
 - La navegacion al detalle es una ruta tipada (`ExerciseDetailNav`) en el `MainGraph`.
 - La carga de detalle se gestiona en `ExerciseDetailViewModel`.
 - El repositorio de ejercicios mantiene cache en memoria por `id` para evitar llamadas repetidas durante la sesion.
-- La imagen se cachea en memoria durante la vida del proceso para evitar descargas repetidas en la misma ejecucion.
+- La imagen del detalle se guarda en `cacheDir/exercise-images/` con extension `.gif` para reproducirla desde un archivo local.
+- `PeakProFitApp` registra un `ImageLoader` global de Coil con `ImageDecoderDecoder`/`GifDecoder` para soportar GIFs animados.
+- El flujo replica el patron usado en iOS: descargar bytes, persistirlos en cache y abrir el recurso desde una ruta local.
 - Si la API no devuelve imagen para un ejercicio concreto, el detalle sigue siendo valido y la UI no debe tratarlo como error bloqueante.
 
 ## Persistencia local de guardados

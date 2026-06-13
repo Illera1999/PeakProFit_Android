@@ -46,6 +46,7 @@ fun ExercisesScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val spacing = PeakTheme.spacing
+    val visibleItems = state.visibleItems
 
     Column(
         modifier = Modifier
@@ -78,7 +79,7 @@ fun ExercisesScreen(
                 value = state.query,
                 onValueChange = viewModel::onQueryChanged,
                 placeholder = stringResource(R.string.exercises_search_label),
-                enabled = !state.isLoading && !state.isLoadingMore
+                enabled = !state.isLoading
             )
 
             Box(
@@ -111,7 +112,15 @@ fun ExercisesScreen(
                             }
                         }
                     }
-                    state.filteredItems.isEmpty() -> {
+                    state.isSearching -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
+                    visibleItems.isEmpty() -> {
                         PeakSectionCard {
                             Text(
                                 text = if (state.query.isBlank()) {
@@ -131,7 +140,7 @@ fun ExercisesScreen(
                             verticalArrangement = Arrangement.spacedBy(spacing.medium)
                         ) {
                             Text(
-                                text = stringResource(R.string.exercises_results, state.filteredItems.size),
+                                text = stringResource(R.string.exercises_results, visibleItems.size),
                                 style = MaterialTheme.typography.body,
                                 color = PeakTheme.colors.textSecondary
                             )
@@ -142,7 +151,7 @@ fun ExercisesScreen(
                                 contentPadding = PaddingValues(bottom = spacing.xxLarge)
                             ) {
                                 itemsIndexed(
-                                    items = state.filteredItems,
+                                    items = visibleItems,
                                     key = { index, exercise -> "${exercise.id}-$index" }
                                 ) { index, exercise ->
                                     ExerciseCard(
@@ -153,7 +162,7 @@ fun ExercisesScreen(
                                         onSaveClick = viewModel::onSaveClicked
                                     )
 
-                                    if (index >= state.filteredItems.lastIndex - 2 && state.query.isBlank()) {
+                                    if (index >= visibleItems.lastIndex - 2 && state.query.isBlank()) {
                                         LaunchedEffect(
                                             index,
                                             state.isLoadingMore,
@@ -167,7 +176,7 @@ fun ExercisesScreen(
                                     }
                                 }
 
-                                if (state.isLoadingMore) {
+                                if (state.isLoadingMore && state.query.isBlank()) {
                                     item(key = "loading_more") {
                                         PeakSectionCard {
                                             Column(
