@@ -4,6 +4,7 @@
 
 - Inicio de sesion con Firebase Auth.
 - Registro de usuarios con email y contrasena.
+- Recuperacion de contrasena por email con Firebase Auth.
 - Modo invitado para entrar sin cuenta.
 - Observacion reactiva de sesion mediante `AuthState`.
 - Logout desde perfil.

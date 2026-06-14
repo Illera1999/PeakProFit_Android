@@ -42,6 +42,10 @@ class FirebaseAuthRepository(
         firebaseAuth.createUserWithEmailAndPassword(email, password).await()
     }
 
+    override suspend fun sendPasswordResetEmail(email: String) {
+        firebaseAuth.sendPasswordResetEmail(email).await()
+    }
+
     override fun continueAsGuest() {
         isGuestSession = true
         if (firebaseAuth.currentUser == null) {

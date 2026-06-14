@@ -28,6 +28,17 @@ Flujo:
 3. Firebase crea la cuenta.
 4. La app navega al flujo principal.
 
+## `SendPasswordResetEmailUseCase`
+
+Responsabilidad: solicitar a Firebase Auth el envio del email de recuperacion de contrasena.
+
+Flujo:
+
+1. `LoginViewModel` valida que el email no este vacio y tenga formato valido.
+2. Ejecuta `SendPasswordResetEmailUseCase`.
+3. `AuthRepository` delega en Firebase Auth.
+4. La UI muestra mensaje de exito o error controlado.
+
 ## `ContinueAsGuestUseCase`
 
 Responsabilidad: activar modo invitado.

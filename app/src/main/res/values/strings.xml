@@ -48,6 +48,7 @@
     <string name="auth_hide_password">Ocultar contraseña</string>
     <string name="auth_error_required_fields">Email y contraseña son obligatorios</string>
     <string name="auth_error_required_register_fields">Email y ambas contraseñas son obligatorios</string>
+    <string name="auth_error_email_required">El email es obligatorio</string>
     <string name="auth_error_invalid_email">Email no válido</string>
     <string name="auth_error_short_password">La contraseña debe tener al menos 6 caracteres</string>
     <string name="auth_error_passwords_do_not_match">Las contraseñas no coinciden</string>
@@ -61,9 +62,12 @@
     <string name="auth_error_weak_password">La contraseña es demasiado débil</string>
     <string name="auth_error_register_disabled">Registro no permitido temporalmente</string>
     <string name="auth_error_register_generic">No se pudo crear la cuenta</string>
+    <string name="auth_error_password_reset_generic">No se pudo enviar el email de recuperación. Inténtalo de nuevo.</string>
+    <string name="auth_password_reset_sent">Te hemos enviado un email de recuperación a %1$s.</string>
     <string name="login_title">Iniciar sesión</string>
     <string name="login_primary_action">Entrar</string>
-    <string name="login_password_help">Si has olvidado la contraseña, podrás recuperarla más adelante.</string>
+    <string name="login_password_reset_action">¿Has olvidado la contraseña?</string>
+    <string name="login_password_reset_sending">Enviando email de recuperación...</string>
     <string name="login_secondary_action">¿No tienes cuenta? Regístrate</string>
     <string name="login_guest_action">Entrar como invitado</string>
     <string name="register_title">Registrarse</string>

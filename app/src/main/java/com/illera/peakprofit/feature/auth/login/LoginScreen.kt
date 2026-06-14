@@ -56,14 +56,21 @@ fun LoginScreen(
         primaryActionText = stringResource(R.string.login_primary_action),
         secondaryActionText = stringResource(R.string.login_secondary_action),
         tertiaryActionText = stringResource(R.string.login_guest_action),
-        supportingText = stringResource(R.string.login_password_help),
         onEmailChanged = viewModel::onEmailChanged,
         onPasswordChanged = viewModel::onPasswordChanged,
         onPrimaryAction = viewModel::signIn,
         onSecondaryAction = onNavigateToRegister,
         onTertiaryAction = viewModel::continueAsGuest,
         errorMessage = state.errorMessage,
-        enabled = !state.isLoading,
+        successMessage = state.successMessage,
+        supportingText = if (state.isSendingPasswordReset) {
+            stringResource(R.string.login_password_reset_sending)
+        } else {
+            stringResource(R.string.login_password_reset_action)
+        },
+        onSupportingTextClick = viewModel::sendPasswordResetEmail,
+        supportingTextEnabled = !state.isLoading && !state.isSendingPasswordReset,
+        enabled = !state.isLoading && !state.isSendingPasswordReset,
         loading = state.isLoading
     )
 }

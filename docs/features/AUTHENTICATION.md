@@ -11,6 +11,7 @@ El flujo de autenticacion permite usar la app con cuenta Firebase o entrar como 
 - `AuthState`
 - `SignInUseCase`
 - `RegisterUseCase`
+- `SendPasswordResetEmailUseCase`
 - `ContinueAsGuestUseCase`
 - `ObserveSessionUseCase`
 - `SplashViewModel`
@@ -40,6 +41,17 @@ El flujo de autenticacion permite usar la app con cuenta Firebase o entrar como 
 3. Ejecuta `SignInUseCase`.
 4. Firebase Auth valida credenciales.
 5. La navegacion sustituye el flujo de auth por tabs principales.
+
+## Recuperacion de contrasena
+
+La pantalla de login permite solicitar un email de recuperacion desde Firebase Auth.
+
+1. El usuario introduce su email.
+2. Pulsa la accion de recuperar contrasena.
+3. `LoginViewModel` valida el email sin exigir contrasena.
+4. Ejecuta `SendPasswordResetEmailUseCase`.
+5. `FirebaseAuthRepository` llama a `sendPasswordResetEmail`.
+6. La UI informa si el email se ha solicitado correctamente o si Firebase devuelve un error.
 
 ## Registro
 

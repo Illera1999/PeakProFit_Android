@@ -49,8 +49,11 @@ fun AuthForm(
     tertiaryActionText: String? = null,
     onTertiaryAction: (() -> Unit)? = null,
     supportingText: String? = null,
-    errorMessage: UiText? = null,
+    onSupportingTextClick: (() -> Unit)? = null,
     enabled: Boolean = true,
+    supportingTextEnabled: Boolean = enabled,
+    successMessage: UiText? = null,
+    errorMessage: UiText? = null,
     loading: Boolean = false
 ) {
     val colors = PeakTheme.colors
@@ -116,12 +119,32 @@ fun AuthForm(
                 }
 
                 supportingText?.let { text ->
-                    PeakMutedText(
-                        text = text,
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Center
-                    )
+                    if (onSupportingTextClick != null) {
+                        PeakTextButton(
+                            text = text,
+                            onClick = onSupportingTextClick,
+                            modifier = Modifier.align(Alignment.CenterHorizontally),
+                            enabled = supportingTextEnabled,
+                            style = PeakTextButtonStyle.Secondary
+                        )
+                    } else {
+                        PeakMutedText(
+                            text = text,
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center
+                        )
+                    }
                 }
+            }
+
+            successMessage?.let { message ->
+                Text(
+                    text = message.asString(),
+                    modifier = Modifier.fillMaxWidth(),
+                    style = MaterialTheme.typography.bodyMuted,
+                    color = MaterialTheme.colorScheme.primary,
+                    textAlign = TextAlign.Center
+                )
             }
 
             errorMessage?.let { message ->
