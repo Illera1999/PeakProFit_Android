@@ -41,4 +41,3 @@ Esta documentacion esta pensada para entender el proyecto, defender sus decision
 ## 5. Decisiones y explicacion
 
 - [Librerias escogidas](./decisions/LIBRARIES.md)
-- [Guion para video explicativo](./guide/VIDEO_SCRIPT.md)
